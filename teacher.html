@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Teacher Dashboard - Gamified Learning</title>
+    <link rel="stylesheet" href="assets/css/styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header class="site-header">
+        <div class="brand">
+            <span class="logo">🎓</span>
+            <span data-i18n="app_title">Gamified Learning</span>
+        </div>
+        <nav class="nav">
+            <a href="index.html" data-i18n="nav_home">Home</a>
+            <a href="dashboard.html" data-i18n="nav_dashboard">Dashboard</a>
+            <a href="leaderboard.html" data-i18n="nav_leaderboard">Leaderboard</a>
+            <a href="teacher.html" class="active" data-i18n="nav_teacher">Teacher</a>
+        </nav>
+        <div class="controls">
+            <select id="langSelect" aria-label="Language selector">
+                <option value="en">English</option>
+                <option value="hi">हिन्दी</option>
+                <option value="kn">ಕನ್ನಡ</option>
+            </select>
+        </div>
+    </header>
+
+    <main class="container">
+        <h1 data-i18n="teacher_title">Teacher Dashboard</h1>
+        <section class="analytics">
+            <div class="stat">
+                <div class="stat-label" data-i18n="stat_total_students">Total Students</div>
+                <div class="stat-value" id="statStudents">0</div>
+            </div>
+            <div class="stat">
+                <div class="stat-label" data-i18n="stat_total_quizzes">Total Quizzes</div>
+                <div class="stat-value" id="statQuizzes">0</div>
+            </div>
+            <div class="stat">
+                <div class="stat-label" data-i18n="stat_avg_score">Average Score</div>
+                <div class="stat-value" id="statAvg">0%</div>
+            </div>
+        </section>
+
+        <section class="chart-card">
+            <h2 data-i18n="teacher_subject_perf">Average Score by Subject</h2>
+            <div class="bars" id="subjectBars">
+                <!-- Bars inserted by JS -->
+            </div>
+        </section>
+
+        <section class="chart-card">
+            <h2 data-i18n="teacher_badges">Badges Earned</h2>
+            <div id="badgeCloud" class="badge-cloud"></div>
+        </section>
+    </main>
+
+    <footer class="site-footer">
+        <div>© <span id="year"></span> <span data-i18n="app_title">Gamified Learning</span></div>
+    </footer>
+
+    <script src="assets/js/storage.js"></script>
+    <script src="assets/js/i18n.js"></script>
+    <script src="assets/js/app.js"></script>
+    <script>
+        (function renderAnalytics(){
+            const board = StorageAPI.getLeaderboard();
+            const stats = StorageAPI.getAnalytics();
+            document.getElementById('statStudents').textContent = String(board.length);
+            document.getElementById('statQuizzes').textContent = String(stats.totalQuizzes);
+            document.getElementById('statAvg').textContent = `${Math.round(stats.averageScoreAll)}%`;
+
+            const bars = document.getElementById('subjectBars');
+            const subjects = [
+                { key:'math', label:I18n.t('subject_math'), color:'var(--c-math)' },
+                { key:'science', label:I18n.t('subject_science'), color:'var(--c-science)' },
+                { key:'english', label:I18n.t('subject_english'), color:'var(--c-english)' },
+            ];
+            bars.innerHTML = subjects.map(s => {
+                const val = Math.round(stats.averageScoreBySubject[s.key] || 0);
+                return `
+                    <div class="bar-row">
+                        <span class="bar-label">${s.label}</span>
+                        <div class="bar-track">
+                            <div class="bar-fill" style="width:${val}%;background:${s.color}"></div>
+                        </div>
+                        <span class="bar-value">${val}%</span>
+                    </div>
+                `;
+            }).join('');
+
+            const badgeCloud = document.getElementById('badgeCloud');
+            const counts = stats.badgeCounts; // { badgeName: count }
+            const entries = Object.entries(counts);
+            if (!entries.length) {
+                badgeCloud.innerHTML = `<div class="note" data-i18n="teacher_no_badges">No badges yet.</div>`;
+                I18n.apply();
+                return;
+            }
+            const max = Math.max(...entries.map(([,c]) => c));
+            badgeCloud.innerHTML = entries.map(([name,count]) => {
+                const scale = 0.8 + (count/max) * 1.2; // 0.8x to 2.0x
+                return `<span class="badge tag" style="transform:scale(${scale})">${name} × ${count}</span>`;
+            }).join(' ');
+        })();
+    </script>
+</body>
+</html>
+
+

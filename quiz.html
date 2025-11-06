@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Quiz - Gamified Learning</title>
+    <link rel="stylesheet" href="assets/css/styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header class="site-header">
+        <div class="brand">
+            <span class="logo">🎓</span>
+            <span data-i18n="app_title">Gamified Learning</span>
+        </div>
+        <nav class="nav">
+            <a href="index.html" data-i18n="nav_home">Home</a>
+            <a href="dashboard.html" data-i18n="nav_dashboard">Dashboard</a>
+            <a href="leaderboard.html" data-i18n="nav_leaderboard">Leaderboard</a>
+            <a href="teacher.html" data-i18n="nav_teacher">Teacher</a>
+        </nav>
+        <div class="controls">
+            <select id="langSelect" aria-label="Language selector">
+                <option value="en">English</option>
+                <option value="hi">हिन्दी</option>
+                <option value="kn">ಕನ್ನಡ</option>
+            </select>
+            <div class="user-box">
+                <input id="userNameInput" type="text" placeholder="Your name" aria-label="Your name">
+                <button id="saveUserBtn" class="btn btn-primary" data-i18n="btn_save">Save</button>
+            </div>
+        </div>
+    </header>
+
+    <main class="container">
+        <div class="quiz-header">
+            <h1 id="quizTitle">Quiz</h1>
+            <div class="pill" id="quizSubjectPill">—</div>
+        </div>
+        <section id="quizContainer" class="quiz">
+            <!-- Questions injected by JS -->
+        </section>
+        <div class="quiz-actions">
+            <button id="submitQuizBtn" class="btn btn-accent" data-i18n="btn_submit">Submit</button>
+            <a class="btn btn-secondary" href="dashboard.html" data-i18n="btn_back_dashboard">Back to Dashboard</a>
+        </div>
+        <section id="quizResult" class="result" hidden>
+            <h2 data-i18n="result_title">Your Result</h2>
+            <p><span data-i18n="label_score">Score</span>: <strong id="scorePct">0%</strong></p>
+            <p><span data-i18n="label_points_gained">Points Gained</span>: <strong id="pointsGained">0</strong></p>
+            <div id="badgesEarned" class="badges"></div>
+        </section>
+    </main>
+
+    <footer class="site-footer">
+        <div>© <span id="year"></span> <span data-i18n="app_title">Gamified Learning</span></div>
+        <div class="points"><span data-i18n="label_points">Points</span>: <strong id="totalPoints">0</strong></div>
+    </footer>
+
+    <script src="assets/js/storage.js"></script>
+    <script src="assets/js/i18n.js"></script>
+    <script src="assets/js/app.js"></script>
+    <script src="assets/js/quiz.js"></script>
+</body>
+</html>
+
+

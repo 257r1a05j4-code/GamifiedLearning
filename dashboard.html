@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Dashboard - Gamified Learning</title>
+    <link rel="stylesheet" href="assets/css/styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header class="site-header">
+        <div class="brand">
+            <span class="logo">🎓</span>
+            <span data-i18n="app_title">Gamified Learning</span>
+        </div>
+        <nav class="nav">
+            <a href="index.html" data-i18n="nav_home">Home</a>
+            <a href="dashboard.html" class="active" data-i18n="nav_dashboard">Dashboard</a>
+            <a href="leaderboard.html" data-i18n="nav_leaderboard">Leaderboard</a>
+            <a href="teacher.html" data-i18n="nav_teacher">Teacher</a>
+        </nav>
+        <div class="controls">
+            <select id="langSelect" aria-label="Language selector">
+                <option value="en">English</option>
+                <option value="hi">हिन्दी</option>
+                <option value="kn">ಕನ್ನಡ</option>
+            </select>
+            <div class="user-box">
+                <input id="userNameInput" type="text" placeholder="Your name" aria-label="Your name">
+                <button id="saveUserBtn" class="btn btn-primary" data-i18n="btn_save">Save</button>
+            </div>
+        </div>
+    </header>
+
+    <main class="container">
+        <h1 data-i18n="dashboard_title">Your Subjects</h1>
+        <section id="subjects" class="cards-grid">
+            <!-- Filled by JS from progress -->
+        </section>
+    </main>
+
+    <footer class="site-footer">
+        <div>© <span id="year"></span> <span data-i18n="app_title">Gamified Learning</span></div>
+        <div class="points"><span data-i18n="label_points">Points</span>: <strong id="totalPoints">0</strong></div>
+    </footer>
+
+    <script src="assets/js/storage.js"></script>
+    <script src="assets/js/i18n.js"></script>
+    <script src="assets/js/app.js"></script>
+    <script>
+        (function renderSubjects(){
+            const container = document.getElementById('subjects');
+            const subjects = [
+                { key: 'math', emoji: '🧮', titleKey: 'subject_math', descKey: 'home_card_math' },
+                { key: 'science', emoji: '🔬', titleKey: 'subject_science', descKey: 'home_card_science' },
+                { key: 'english', emoji: '📚', titleKey: 'subject_english', descKey: 'home_card_english' },
+            ];
+            const progress = StorageAPI.getUserProgress(StorageAPI.getCurrentUser());
+            container.innerHTML = subjects.map(s => {
+                const subj = progress.subjects[s.key] || { quizzesTaken: 0, bestScore: 0 };
+                return `
+                    <article class="card">
+                        <div class="card-emoji">${s.emoji}</div>
+                        <h3 data-i18n="${s.titleKey}">${I18n.t(s.titleKey)}</h3>
+                        <p data-i18n="${s.descKey}">${I18n.t(s.descKey)}</p>
+                        <div class="progress-row">
+                            <span data-i18n="label_quizzes">Quizzes</span>: <strong>${subj.quizzesTaken}</strong>
+                            <span class="spacer"></span>
+                            <span data-i18n="label_best">Best</span>: <strong>${subj.bestScore}%</strong>
+                        </div>
+                        <a class="btn btn-secondary" href="quiz.html?subject=${s.key}" data-i18n="btn_take_quiz">${I18n.t('btn_take_quiz')}</a>
+                    </article>
+                `;
+            }).join('');
+            I18n.apply();
+        })();
+    </script>
+</body>
+</html>
+
+

@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Admin - Gamified Learning</title>
+    <link rel="stylesheet" href="assets/css/styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header class="site-header">
+        <div class="brand">
+            <span class="logo">🎓</span>
+            <span data-i18n="app_title">Gamified Learning</span>
+        </div>
+        <nav class="nav">
+            <a href="index.html" data-i18n="nav_home">Home</a>
+            <a href="dashboard.html" data-i18n="nav_dashboard">Dashboard</a>
+            <a href="leaderboard.html" data-i18n="nav_leaderboard">Leaderboard</a>
+            <a href="teacher.html" data-i18n="nav_teacher">Teacher</a>
+            <a href="lectures.html" data-i18n="nav_lectures">Lectures</a>
+            <a href="profile.html" data-i18n="nav_profile">Profile</a>
+            <a href="login.html" data-i18n="nav_login">Login</a>
+            <a href="admin.html" class="active" data-i18n="nav_admin">Admin</a>
+            <a href="spoc.html" data-i18n="nav_spoc">SPOC</a>
+        </nav>
+        <div class="controls">
+            <select id="langSelect" aria-label="Language selector">
+                <option value="en">English</option>
+                <option value="hi">हिन्दी</option>
+                <option value="kn">ಕನ್ನಡ</option>
+            </select>
+        </div>
+    </header>
+
+    <main class="container">
+        <h1>Admin Panel</h1>
+
+        <section class="card">
+            <h3>Create SPOC</h3>
+            <div class="options">
+                <input id="spocName" placeholder="SPOC name">
+                <input id="spocOwner" placeholder="Owner (user name)">
+                <input id="spocBudget" placeholder="Budget">
+                <button class="btn btn-primary" id="createSpocBtn">Create</button>
+            </div>
+        </section>
+
+        <section class="card">
+            <h3>Manage Users</h3>
+            <div class="options">
+                <input id="mUser" placeholder="User name">
+                <select id="mRole">
+                    <option value="student">Student</option>
+                    <option value="spoc">SPOC</option>
+                    <option value="admin">Admin</option>
+                </select>
+                <input id="mAssignSpoc" placeholder="Assign SPOC ID (optional)">
+                <button class="btn btn-secondary" id="btnSetRole">Set Role</button>
+                <button class="btn btn-accent" id="btnVerifyEmail">Verify Email</button>
+            </div>
+        </section>
+
+        <section class="card">
+            <h3>SPOC List</h3>
+            <div id="spocList"></div>
+        </section>
+
+        <section class="card">
+            <h3>Payments</h3>
+            <div class="options">
+                <input id="paySpocId" placeholder="SPOC ID">
+                <input id="payAmount" placeholder="Amount">
+                <input id="payNote" placeholder="Note">
+                <button class="btn btn-primary" id="btnAddPayment">Add Payment</button>
+            </div>
+            <div id="payments"></div>
+        </section>
+    </main>
+
+    <footer class="site-footer">
+        <div>© <span id="year"></span> <span data-i18n="app_title">Gamified Learning</span></div>
+    </footer>
+
+    <script src="assets/js/storage.js"></script>
+    <script src="assets/js/i18n.js"></script>
+    <script src="assets/js/app.js"></script>
+    <script>
+        function renderSpocs(){
+            const list = StorageAPI.listSpocs();
+            document.getElementById('spocList').innerHTML = list.map(s => `
+                <div class="option">
+                    <div><strong>${s.id}</strong> - ${s.name}</div>
+                    <div>Owner: ${s.owner || '-'} | Budget: ₹${s.budget} | Spent: ₹${s.spent||0}</div>
+                </div>
+            `).join('');
+        }
+        function renderPayments(){
+            const p = StorageAPI.listPayments();
+            document.getElementById('payments').innerHTML = p.map(x => `
+                <div class="option">[${new Date(x.ts).toLocaleString()}] ₹${x.amount} - ${x.note} (${x.by}${x.spocId?(':'+x.spocId):''})</div>
+            `).join('');
+        }
+
+        document.getElementById('createSpocBtn').onclick = ()=>{
+            const name = document.getElementById('spocName').value;
+            const owner = document.getElementById('spocOwner').value;
+            const budget = Number(document.getElementById('spocBudget').value||0);
+            const sp = StorageAPI.createSpoc({ name, owner, budget });
+            alert('Created SPOC ' + sp.id);
+            renderSpocs();
+        };
+        document.getElementById('btnSetRole').onclick = ()=>{
+            const u = document.getElementById('mUser').value;
+            const role = document.getElementById('mRole').value;
+            const spocId = document.getElementById('mAssignSpoc').value;
+            const p = StorageAPI.getUserProfile(u);
+            p.role = role; StorageAPI.saveUserProfile(p);
+            if (spocId) StorageAPI.assignUserToSpoc(u, spocId);
+            alert('Updated user');
+        };
+        document.getElementById('btnVerifyEmail').onclick = ()=>{
+            const u = document.getElementById('mUser').value;
+            StorageAPI.setEmailVerified(u, true);
+            alert('Email verified for ' + u);
+        };
+        document.getElementById('btnAddPayment').onclick = ()=>{
+            const spocId = document.getElementById('paySpocId').value;
+            const amount = Number(document.getElementById('payAmount').value||0);
+            const note = document.getElementById('payNote').value;
+            StorageAPI.addPayment({ by: 'admin', spocId, amount, note });
+            renderPayments();
+        };
+        renderSpocs();
+        renderPayments();
+    </script>
+</body>
+</html>
+
+

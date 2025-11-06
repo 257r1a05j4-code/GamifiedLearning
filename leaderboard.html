@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Leaderboard - Gamified Learning</title>
+    <link rel="stylesheet" href="assets/css/styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header class="site-header">
+        <div class="brand">
+            <span class="logo">🎓</span>
+            <span data-i18n="app_title">Gamified Learning</span>
+        </div>
+        <nav class="nav">
+            <a href="index.html" data-i18n="nav_home">Home</a>
+            <a href="dashboard.html" data-i18n="nav_dashboard">Dashboard</a>
+            <a href="leaderboard.html" class="active" data-i18n="nav_leaderboard">Leaderboard</a>
+            <a href="teacher.html" data-i18n="nav_teacher">Teacher</a>
+        </nav>
+        <div class="controls">
+            <select id="langSelect" aria-label="Language selector">
+                <option value="en">English</option>
+                <option value="hi">हिन्दी</option>
+                <option value="kn">ಕನ್ನಡ</option>
+            </select>
+            <div class="user-box">
+                <input id="userNameInput" type="text" placeholder="Your name" aria-label="Your name">
+                <button id="saveUserBtn" class="btn btn-primary" data-i18n="btn_save">Save</button>
+            </div>
+        </div>
+    </header>
+
+    <main class="container">
+        <h1 data-i18n="leaderboard_title">Leaderboard</h1>
+        <div class="leaderboard">
+            <ol id="leaderboardList" class="leaderboard-list">
+                <!-- Filled by JS -->
+            </ol>
+        </div>
+        <div class="note" data-i18n="leaderboard_note">This leaderboard is stored on your device for offline use.</div>
+    </main>
+
+    <footer class="site-footer">
+        <div>© <span id="year"></span> <span data-i18n="app_title">Gamified Learning</span></div>
+        <div class="points"><span data-i18n="label_points">Points</span>: <strong id="totalPoints">0</strong></div>
+    </footer>
+
+    <script src="assets/js/storage.js"></script>
+    <script src="assets/js/i18n.js"></script>
+    <script src="assets/js/app.js"></script>
+    <script>
+        (function renderLeaderboard(){
+            const list = document.getElementById('leaderboardList');
+            const board = StorageAPI.getLeaderboard();
+            if (!board.length) {
+                list.innerHTML = '<li data-i18n="leaderboard_empty">No scores yet. Take a quiz!</li>';
+                I18n.apply();
+                return;
+            }
+            const current = StorageAPI.getCurrentUser();
+            list.innerHTML = board.map((entry, idx) => `
+                <li class="${entry.name === current ? 'me' : ''}">
+                    <span class="rank">#${idx + 1}</span>
+                    <span class="name">${entry.name}</span>
+                    <span class="points">${entry.points} ⭐</span>
+                    <span class="badges">${(entry.badges||[]).map(b=>`<span class='badge'>${b}</span>`).join('')}</span>
+                </li>
+            `).join('');
+        })();
+    </script>
+</body>
+</html>
+
+

@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>SPOC - Gamified Learning</title>
+    <link rel="stylesheet" href="assets/css/styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header class="site-header">
+        <div class="brand">
+            <span class="logo">🎓</span>
+            <span data-i18n="app_title">Gamified Learning</span>
+        </div>
+        <nav class="nav">
+            <a href="index.html" data-i18n="nav_home">Home</a>
+            <a href="dashboard.html" data-i18n="nav_dashboard">Dashboard</a>
+            <a href="leaderboard.html" data-i18n="nav_leaderboard">Leaderboard</a>
+            <a href="teacher.html" data-i18n="nav_teacher">Teacher</a>
+            <a href="lectures.html" data-i18n="nav_lectures">Lectures</a>
+            <a href="profile.html" data-i18n="nav_profile">Profile</a>
+            <a href="login.html" data-i18n="nav_login">Login</a>
+            <a href="admin.html" data-i18n="nav_admin">Admin</a>
+            <a href="spoc.html" class="active" data-i18n="nav_spoc">SPOC</a>
+        </nav>
+        <div class="controls">
+            <select id="langSelect" aria-label="Language selector">
+                <option value="en">English</option>
+                <option value="hi">हिन्दी</option>
+                <option value="kn">ಕನ್ನಡ</option>
+            </select>
+        </div>
+    </header>
+
+    <main class="container">
+        <h1>SPOC Dashboard</h1>
+        <section class="card">
+            <h3>Your SPOC</h3>
+            <div id="mySpoc"></div>
+        </section>
+        <section class="card">
+            <h3>Students</h3>
+            <div id="students"></div>
+        </section>
+        <section class="card">
+            <h3>Usage Tracking</h3>
+            <div class="options">
+                <select id="uType">
+                    <option value="quiz">Quiz</option>
+                    <option value="lecture">Lecture</option>
+                    <option value="video">Video</option>
+                </select>
+                <input id="uSubject" placeholder="Subject (optional)">
+                <input id="uCost" placeholder="Cost (optional)">
+                <button class="btn btn-primary" id="btnTrack">Track</button>
+            </div>
+            <div id="usageStats"></div>
+        </section>
+        <section class="card">
+            <h3>Payments</h3>
+            <div class="options">
+                <input id="sAmount" placeholder="Amount">
+                <input id="sNote" placeholder="Note">
+                <button class="btn btn-secondary" id="btnSelfPay">Add Self Payment</button>
+            </div>
+            <div id="spocPayments"></div>
+        </section>
+    </main>
+
+    <footer class="site-footer">
+        <div>© <span id="year"></span> <span data-i18n="app_title">Gamified Learning</span></div>
+    </footer>
+
+    <script src="assets/js/storage.js"></script>
+    <script src="assets/js/i18n.js"></script>
+    <script src="assets/js/app.js"></script>
+    <script>
+        const me = StorageAPI.getUserProfile(StorageAPI.getCurrentUser());
+        const spocId = me.spocId;
+        function render(){
+            const spocs = StorageAPI.listSpocs();
+            const my = spocs.find(s=>s.id===spocId);
+            document.getElementById('mySpoc').innerHTML = my ? `
+                <div class="option"><strong>${my.name}</strong> (ID: ${my.id})</div>
+                <div class="note">Budget: ₹${my.budget} | Spent: ₹${my.spent||0}</div>
+            ` : '<div class="note">No SPOC assigned. Ask admin.</div>';
+            const users = Object.values(JSON.parse(localStorage.getItem('glre.users')||'{}'));
+            const students = users.filter(u => u.spocId === spocId && u.role === 'student');
+            document.getElementById('students').innerHTML = students.map(s => `
+                <div class="option"><strong>${s.name}</strong> — Points: ${s.points} | Quizzes: ${s.progress.subjects.math.quizzesTaken + s.progress.subjects.science.quizzesTaken + s.progress.subjects.english.quizzesTaken}</div>
+            `).join('') || '<div class="note">No students yet.</div>';
+            const stats = StorageAPI.getUsageStats({ spocId });
+            document.getElementById('usageStats').innerHTML = `
+                <div>Total Events: ${stats.totalEvents}, Cost: ₹${stats.totalCost}</div>
+                <div>By Type: ${Object.entries(stats.byType).map(([k,v])=>`${k}:${v}`).join(', ')}</div>
+            `;
+            const pays = StorageAPI.listPayments({ spocId });
+            document.getElementById('spocPayments').innerHTML = pays.map(x => `
+                <div class="option">[${new Date(x.ts).toLocaleString()}] ₹${x.amount} - ${x.note} (${x.by})</div>
+            `).join('') || '<div class="note">No payments yet.</div>';
+        }
+        document.getElementById('btnTrack').onclick = ()=>{
+            const type = document.getElementById('uType').value;
+            const subject = document.getElementById('uSubject').value;
+            const cost = Number(document.getElementById('uCost').value||0);
+            StorageAPI.trackUsage({ user: me.name, type, subject, cost, spocId });
+            render();
+        };
+        document.getElementById('btnSelfPay').onclick = ()=>{
+            const amount = Number(document.getElementById('sAmount').value||0);
+            const note = document.getElementById('sNote').value;
+            StorageAPI.addPayment({ by:'spoc', spocId, amount, note });
+            render();
+        };
+        render();
+    </script>
+</body>
+</html>
+
+

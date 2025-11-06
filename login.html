@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Login / Signup - Gamified Learning</title>
+    <link rel="stylesheet" href="assets/css/styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header class="site-header">
+        <div class="brand">
+            <span class="logo">🎓</span>
+            <span data-i18n="app_title">Gamified Learning</span>
+        </div>
+        <nav class="nav">
+            <a href="index.html" data-i18n="nav_home">Home</a>
+            <a href="dashboard.html" data-i18n="nav_dashboard">Dashboard</a>
+            <a href="leaderboard.html" data-i18n="nav_leaderboard">Leaderboard</a>
+            <a href="teacher.html" data-i18n="nav_teacher">Teacher</a>
+            <a href="lectures.html" data-i18n="nav_lectures">Lectures</a>
+            <a href="profile.html" data-i18n="nav_profile">Profile</a>
+            <a href="login.html" class="active" data-i18n="nav_login">Login</a>
+            <a href="admin.html" data-i18n="nav_admin">Admin</a>
+            <a href="spoc.html" data-i18n="nav_spoc">SPOC</a>
+        </nav>
+        <div class="controls">
+            <select id="langSelect" aria-label="Language selector">
+                <option value="en">English</option>
+                <option value="hi">हिन्दी</option>
+                <option value="kn">ಕನ್ನಡ</option>
+            </select>
+        </div>
+    </header>
+
+    <main class="container">
+        <h1>Login / Signup</h1>
+        <section class="card">
+            <h3>Existing User</h3>
+            <div class="options">
+                <input id="loginName" placeholder="Name">
+                <button class="btn btn-primary" id="loginBtn">Login</button>
+            </div>
+        </section>
+        <section class="card">
+            <h3>New User Signup</h3>
+            <div class="options">
+                <input id="suName" placeholder="Full name">
+                <input id="suEmail" placeholder="Email">
+                <input id="suPhone" placeholder="Phone">
+                <input id="suGrade" placeholder="Current grade">
+                <input id="suSchool" placeholder="School">
+                <input id="suDob" placeholder="DOB">
+                <input id="suGender" placeholder="Gender">
+                <input id="suLocation" placeholder="Location">
+                <select id="suRole">
+                    <option value="student">Student</option>
+                    <option value="spoc">SPOC</option>
+                    <option value="admin">Admin</option>
+                </select>
+                <button class="btn btn-accent" id="signupBtn">Signup</button>
+                <button class="btn btn-secondary" id="verifyEmailBtn">Simulate Email Verify</button>
+            </div>
+            <div class="note">Admin can verify and upgrade roles in Admin page.</div>
+        </section>
+        <div class="quiz-actions">
+            <a class="btn btn-secondary" href="profile.html">Go to Profile</a>
+        </div>
+    </main>
+
+    <footer class="site-footer">
+        <div>© <span id="year"></span> <span data-i18n="app_title">Gamified Learning</span></div>
+    </footer>
+
+    <script src="assets/js/storage.js"></script>
+    <script src="assets/js/i18n.js"></script>
+    <script src="assets/js/app.js"></script>
+    <script>
+        const loginBtn = document.getElementById('loginBtn');
+        const signupBtn = document.getElementById('signupBtn');
+        const verifyBtn = document.getElementById('verifyEmailBtn');
+        loginBtn.onclick = ()=>{
+            const name = document.getElementById('loginName').value.trim();
+            if (!name) return alert('Enter name');
+            StorageAPI.login(name);
+            alert('Logged in');
+        };
+        signupBtn.onclick = ()=>{
+            const data = {
+                name: document.getElementById('suName').value,
+                email: document.getElementById('suEmail').value,
+                phone: document.getElementById('suPhone').value,
+                currentGrade: document.getElementById('suGrade').value,
+                school: document.getElementById('suSchool').value,
+                dob: document.getElementById('suDob').value,
+                gender: document.getElementById('suGender').value,
+                location: document.getElementById('suLocation').value,
+                role: document.getElementById('suRole').value,
+            };
+            const p = StorageAPI.signup(data);
+            alert('Signed up as ' + p.role);
+        };
+        verifyBtn.onclick = ()=>{
+            const name = StorageAPI.getCurrentUser();
+            StorageAPI.setEmailVerified(name, true);
+            alert('Email marked verified for ' + name);
+        };
+    </script>
+</body>
+</html>
+
+

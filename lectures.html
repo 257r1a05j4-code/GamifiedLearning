@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Lectures - Gamified Learning</title>
+    <link rel="stylesheet" href="assets/css/styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header class="site-header">
+        <div class="brand">
+            <span class="logo">🎓</span>
+            <span data-i18n="app_title">Gamified Learning</span>
+        </div>
+        <nav class="nav">
+            <a href="index.html" data-i18n="nav_home">Home</a>
+            <a href="dashboard.html" data-i18n="nav_dashboard">Dashboard</a>
+            <a href="leaderboard.html" data-i18n="nav_leaderboard">Leaderboard</a>
+            <a href="teacher.html" data-i18n="nav_teacher">Teacher</a>
+            <a href="lectures.html" class="active" data-i18n="nav_lectures">Lectures</a>
+            <a href="profile.html" data-i18n="nav_profile">Profile</a>
+            <a href="login.html" data-i18n="nav_login">Login</a>
+            <a href="admin.html" data-i18n="nav_admin">Admin</a>
+            <a href="spoc.html" data-i18n="nav_spoc">SPOC</a>
+        </nav>
+        <div class="controls">
+            <select id="langSelect" aria-label="Language selector">
+                <option value="en">English</option>
+                <option value="hi">हिन्दी</option>
+                <option value="kn">ಕನ್ನಡ</option>
+            </select>
+        </div>
+    </header>
+
+    <main class="container">
+        <h1>Lectures</h1>
+        <section class="cards-grid">
+            <article class="card">
+                <h3>Curriculum</h3>
+                <ul class="feature-list">
+                    <li>Math: Numbers, Operations, Geometry</li>
+                    <li>Science: Living Things, Earth, Energy</li>
+                    <li>English: Vocabulary, Grammar, Reading</li>
+                </ul>
+            </article>
+            <article class="card">
+                <h3>Personalised Recommendations</h3>
+                <div id="reco"></div>
+            </article>
+            <article class="card">
+                <h3>Previous Year Questions</h3>
+                <ul class="feature-list" id="pyq"></ul>
+            </article>
+            <article class="card">
+                <h3>Lecture Videos</h3>
+                <ul class="feature-list">
+                    <li>Math Basics — 10 min</li>
+                    <li>Science: Water Cycle — 8 min</li>
+                    <li>English: Opposites — 6 min</li>
+                </ul>
+            </article>
+        </section>
+    </main>
+
+    <footer class="site-footer">
+        <div>© <span id="year"></span> <span data-i18n="app_title">Gamified Learning</span></div>
+    </footer>
+
+    <script src="assets/js/storage.js"></script>
+    <script src="assets/js/i18n.js"></script>
+    <script src="assets/js/app.js"></script>
+    <script>
+        const user = StorageAPI.getUserProfile(StorageAPI.getCurrentUser());
+        const reco = document.getElementById('reco');
+        const best = Object.entries(user.progress.subjects).sort((a,b)=>b[1].bestScore-a[1].bestScore);
+        reco.innerHTML = best.slice(0,3).map(([k,s])=>`<div class="option">Practice ${k} — Best ${s.bestScore}%</div>`).join('') || '<div class="note">Take a quiz to see recommendations.</div>';
+        const pyq = document.getElementById('pyq');
+        pyq.innerHTML = ['Math Set A','Science Set B','English Set C'].map(x=>`<li>${x}</li>`).join('');
+    </script>
+</body>
+</html>
+
+
