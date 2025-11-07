@@ -10,14 +10,13 @@
 <body>
     <header class="site-header">
         <div class="brand">
-            <span class="logo">🎓</span>
+            <span class="logo">🎮</span>
             <span data-i18n="app_title">Gamified Learning</span>
         </div>
         <nav class="nav">
             <a href="index.html" data-i18n="nav_home">Home</a>
             <a href="dashboard.html" data-i18n="nav_dashboard">Dashboard</a>
             <a href="leaderboard.html" data-i18n="nav_leaderboard">Leaderboard</a>
-            <a href="teacher.html" data-i18n="nav_teacher">Teacher</a>
             <a href="lectures.html" data-i18n="nav_lectures">Lectures</a>
             <a href="profile.html" class="active" data-i18n="nav_profile">Profile</a>
             <a href="login.html" data-i18n="nav_login">Login</a>
@@ -34,51 +33,78 @@
     </header>
 
     <main class="container">
-        <h1>Your Profile</h1>
-        <section class="card" id="profileCard"></section>
-        <section class="card">
-            <h3>Quiz Metrics</h3>
-            <div id="quizMetrics"></div>
+        <section class="hero">
+            <div class="chip">Player dossier</div>
+            <h1>Commander <span class="text-accent" id="profileName">—</span></h1>
+            <p>Review your progress, sync badges, and keep guardians informed.</p>
+            <div class="hero-actions">
+                <button class="btn btn-accent" id="syncProfileBtn">Sync to Cloud</button>
+                <a class="btn btn-secondary" href="dashboard.html">Back to Dashboard</a>
+            </div>
         </section>
-        <div class="quiz-actions">
-            <button class="btn btn-secondary" id="logoutBtn">Log out</button>
-        </div>
+
+        <section class="stat-grid" aria-label="Profile stats">
+            <article class="stat-card">
+                <span class="stat-eyebrow">Total points</span>
+                <span class="stat-value" id="profilePoints">0</span>
+                <span class="stat-meta">Across all subjects</span>
+            </article>
+            <article class="stat-card">
+                <span class="stat-eyebrow">Badges</span>
+                <span class="stat-value" id="profileBadgeCount">0</span>
+                <span class="stat-meta">Collect and show your skill</span>
+            </article>
+            <article class="stat-card">
+                <span class="stat-eyebrow">Email status</span>
+                <span class="stat-value" id="profileVerified">Pending</span>
+                <span class="stat-meta">Verify for mentor updates</span>
+            </article>
+        </section>
+
+        <section class="glow-panel">
+            <div class="section-heading">
+                <h2>Subject progress</h2>
+                <p>Track quizzes attempted and best score for every realm.</p>
+            </div>
+            <div id="profileProgress" class="feature-list"></div>
+        </section>
+
+        <section class="glow-panel">
+            <div class="section-heading">
+                <h2>Badge collection</h2>
+                <p>Trade badges with your clan or unlock new tiers.</p>
+            </div>
+            <div id="profileBadges" class="badge-cloud"></div>
+        </section>
+
+        <section class="glow-panel">
+            <div class="section-heading">
+                <h2>Account & contact</h2>
+                <p>Keep this updated so mentors can reach you.</p>
+            </div>
+            <ul class="feature-list">
+                <li>Email: <strong id="profileEmail">—</strong></li>
+                <li>Phone: <strong id="profilePhone">—</strong></li>
+                <li>Role: <strong id="profileRole">—</strong></li>
+                <li>School: <strong id="profileSchool">—</strong></li>
+                <li>Grade: <strong id="profileGrade">—</strong></li>
+                <li>Location: <strong id="profileLocation">—</strong></li>
+            </ul>
+        </section>
     </main>
 
     <footer class="site-footer">
         <div>© <span id="year"></span> <span data-i18n="app_title">Gamified Learning</span></div>
-        <div class="points"><span data-i18n="label_points">Points</span>: <strong id="totalPoints">0</strong></div>
     </footer>
 
     <script src="assets/js/storage.js"></script>
     <script src="assets/js/i18n.js"></script>
     <script src="assets/js/app.js"></script>
-    <script>
-        const user = StorageAPI.getUserProfile(StorageAPI.getCurrentUser());
-        const card = document.getElementById('profileCard');
-        card.innerHTML = `
-            <div class="analytics">
-                <div class="stat"><div class="stat-label">Name</div><div class="stat-value">${user.name}</div></div>
-                <div class="stat"><div class="stat-label">Role</div><div class="stat-value">${user.role}</div></div>
-                <div class="stat"><div class="stat-label">Email</div><div class="stat-value">${user.email || '-'}</div></div>
-                <div class="stat"><div class="stat-label">Verified</div><div class="stat-value">${user.emailVerified ? 'Yes' : 'No'}</div></div>
-                <div class="stat"><div class="stat-label">Phone</div><div class="stat-value">${user.phone || '-'}</div></div>
-                <div class="stat"><div class="stat-label">Grade</div><div class="stat-value">${user.currentGrade || '-'}</div></div>
-                <div class="stat"><div class="stat-label">School</div><div class="stat-value">${user.school || '-'}</div></div>
-                <div class="stat"><div class="stat-label">Location</div><div class="stat-value">${user.location || '-'}</div></div>
-                <div class="stat"><div class="stat-label">SPOC</div><div class="stat-value">${user.spocId || '-'}</div></div>
-            </div>
-            <div class="badges" style="margin-top:8px;">${(user.badges||[]).map(b=>`<span class='badge'>${b}</span>`).join(' ')}</div>
-        `;
-        const qm = document.getElementById('quizMetrics');
-        const subs = user.progress.subjects;
-        qm.innerHTML = Object.keys(subs).map(k=>{
-            const s = subs[k];
-            return `<div class="bar-row"><span class="bar-label">${k}</span><div class="bar-track"><div class="bar-fill" style="width:${s.bestScore}%"></div></div><span class="bar-value">${s.bestScore}% | ${s.quizzesTaken} quizzes</span></div>`;
-        }).join('');
-        document.getElementById('logoutBtn').onclick = ()=>{ StorageAPI.logout(); alert('Logged out'); };
-    </script>
+    <script src="assets/js/backend-sync.js"></script>
+    <script src="assets/js/profile.js"></script>
 </body>
 </html>
+
+
 
 

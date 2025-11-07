@@ -3,23 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Gamified Learning for Rural Education</title>
+    <title data-i18n="home_meta_title">Gamified Learning Portal</title>
     <link rel="stylesheet" href="assets/css/styles.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
 </head>
 <body>
     <header class="site-header">
         <div class="brand">
-            <span class="logo">🎓</span>
+            <span class="logo">🎮</span>
             <span data-i18n="app_title">Gamified Learning</span>
         </div>
         <nav class="nav">
             <a href="index.html" class="active" data-i18n="nav_home">Home</a>
             <a href="dashboard.html" data-i18n="nav_dashboard">Dashboard</a>
+            <a href="#modes" data-i18n="nav_seasons">Seasons</a>
             <a href="leaderboard.html" data-i18n="nav_leaderboard">Leaderboard</a>
-            <a href="teacher.html" data-i18n="nav_teacher">Teacher</a>
             <a href="lectures.html" data-i18n="nav_lectures">Lectures</a>
             <a href="profile.html" data-i18n="nav_profile">Profile</a>
             <a href="login.html" data-i18n="nav_login">Login</a>
@@ -33,93 +33,613 @@
                 <option value="kn">ಕನ್ನಡ</option>
             </select>
             <div class="user-box">
-                <input id="userNameInput" type="text" placeholder="Your name" aria-label="Your name">
+                <input id="userNameInput" type="text" placeholder="Your gamer tag" aria-label="Your gamer tag">
                 <button id="saveUserBtn" class="btn btn-primary" data-i18n="btn_save">Save</button>
             </div>
         </div>
     </header>
 
     <main class="container">
-        <section class="hero">
+        <section class="hero" id="hero">
+            <div class="chip" data-i18n="home_chip_season">Season 4 • Cyber Quest</div>
             <h1 data-i18n="home_title">Gamified Learning for Rural Education</h1>
-            <p data-i18n="home_tagline">Learn Math, Science, and English with fun quizzes, badges, and points. Works offline on your phone.</p>
+            <p data-i18n="home_tagline">Learn Math, Science, English, and more with boss fights, badges, and co-op quests that work offline on any device.</p>
             <div class="hero-actions">
                 <a class="btn btn-accent" href="dashboard.html" data-i18n="home_cta_start">Start Learning</a>
+                <a class="btn btn-secondary" href="quiz.html" data-i18n="home_cta_preview">Preview Quests</a>
+            </div>
+            <div class="ticker">
+                <span class="chip chip-ghost" data-i18n="home_badge_offline">Offline-ready</span>
+                <span class="chip chip-ghost" data-i18n="home_badge_languages">3 Languages</span>
+                <span class="chip chip-ghost" data-i18n="home_badge_social">Social Science Added</span>
             </div>
         </section>
 
-        <section class="cards-grid">
-            <article class="card">
-                <div class="card-emoji">🔥</div>
-                <h3 data-i18n="home_trending">Trending Quizzes & Games</h3>
-                <p data-i18n="home_trending_desc">Try popular quizzes picked for you.</p>
-                <a class="btn btn-secondary" href="dashboard.html" data-i18n="btn_explore">Explore</a>
+        <section class="stat-grid" aria-label="Impact stats">
+            <article class="stat-card">
+                <span class="stat-eyebrow" data-i18n="home_stat_learners_label">Active learners</span>
+                <span class="stat-value" id="statLearners">42K+</span>
+                <span class="stat-meta" data-i18n="home_stat_learners_copy">Across village, town, and satellite learning hubs</span>
             </article>
-            <article class="card">
-                <div class="card-emoji">🧮</div>
-                <h3 data-i18n="subject_math">Math</h3>
-                <p data-i18n="home_card_math">Practice numbers, addition, subtraction and more.</p>
-                <a class="btn btn-secondary" href="quiz.html?subject=math" data-i18n="btn_take_quiz">Take Quiz</a>
+            <article class="stat-card">
+                <span class="stat-eyebrow" data-i18n="home_stat_subjects_label">Subjects unlocked</span>
+                <span class="stat-value" id="statSubjects">7</span>
+                <span class="stat-meta" data-i18n="home_stat_subjects_copy">STEM, Social Science, Languages, and Digital Skills</span>
             </article>
-            <article class="card">
-                <div class="card-emoji">🔬</div>
-                <h3 data-i18n="subject_science">Science</h3>
-                <p data-i18n="home_card_science">Explore animals, plants, water cycle and energy.</p>
-                <a class="btn btn-secondary" href="quiz.html?subject=science" data-i18n="btn_take_quiz">Take Quiz</a>
-            </article>
-            <article class="card">
-                <div class="card-emoji">📚</div>
-                <h3 data-i18n="subject_english">English</h3>
-                <p data-i18n="home_card_english">Learn words, opposites, and simple grammar.</p>
-                <a class="btn btn-secondary" href="quiz.html?subject=english" data-i18n="btn_take_quiz">Take Quiz</a>
+            <article class="stat-card">
+                <span class="stat-eyebrow" data-i18n="home_stat_minutes_label">Minutes learned</span>
+                <span class="stat-value" id="statMinutes">3.6M</span>
+                <span class="stat-meta" data-i18n="home_stat_minutes_copy">Tracked through quests, streaks, and lectures</span>
             </article>
         </section>
 
-        <section class="info">
-            <h2 data-i18n="home_how_title">How it works</h2>
-            <ul class="feature-list">
-                <li><span>🏅</span> <span data-i18n="home_how_badges">Earn badges by completing quizzes.</span></li>
-                <li><span>⭐</span> <span data-i18n="home_how_points">Collect points and climb the leaderboard.</span></li>
-                <li><span>📶</span> <span data-i18n="home_how_offline">Works offline. Your progress is saved on your device.</span></li>
-                <li><span>🌐</span> <span data-i18n="home_how_language">Switch language: English, हिन्दी, ಕನ್ನಡ.</span></li>
-            </ul>
+        <section id="progress-insights" class="insights" aria-labelledby="progress-insights-heading">
+            <div class="section-heading">
+                <h2 id="progress-insights-heading">Your Smart Progress Coach</h2>
+                <p>Track subject mastery, session time, and streaks with auto-generated insights that sync when you reconnect.</p>
+            </div>
+            <div class="insights-grid">
+                <article class="insight-card" aria-live="polite">
+                    <header>
+                        <h3>Learning Streak</h3>
+                        <span class="chip" id="streakBadge">0 days 🔄</span>
+                    </header>
+                    <p class="insight-copy">Stay on track by keeping your streak alive. The AI tutor nudges you when you drop.</p>
+                    <dl class="streak-stats">
+                        <div>
+                            <dt>Current streak</dt>
+                            <dd id="streakCurrent">0</dd>
+                        </div>
+                        <div>
+                            <dt>Best streak</dt>
+                            <dd id="streakBest">0</dd>
+                        </div>
+                        <div>
+                            <dt>Last study day</dt>
+                            <dd id="streakLast">—</dd>
+                        </div>
+                    </dl>
+                    <button class="btn btn-ghost" id="resetStreakBtn" type="button">Reset streak</button>
+                </article>
+                <article class="insight-card">
+                    <header>
+                        <h3>Subject Analytics</h3>
+                        <span class="chip chip-accent">Live</span>
+                    </header>
+                    <p class="insight-copy">See time spent and best scores per subject. Tap a subject bubble to start a focused session.</p>
+                    <div class="subject-analytics" id="subjectAnalytics" role="list"></div>
+                    <div class="session-controls" aria-label="Start a study session">
+                        <label for="sessionSubject">Choose subject</label>
+                        <select id="sessionSubject">
+                            <option value="math">Math</option>
+                            <option value="science">Science</option>
+                            <option value="english">English</option>
+                            <option value="social">Social Science</option>
+                            <option value="computers">Computers</option>
+                            <option value="history">History</option>
+                            <option value="geography">Geography</option>
+                        </select>
+                        <button class="btn btn-primary" id="startSessionBtn" type="button">Start Timer</button>
+                        <button class="btn btn-secondary" id="stopSessionBtn" type="button" disabled>Stop &amp; Save</button>
+                        <span class="timer-display" id="sessionTimer" aria-live="polite">00:00</span>
+                    </div>
+                </article>
+                <article class="insight-card">
+                    <header>
+                        <h3>AI Tutor Recommendations</h3>
+                        <span class="chip chip-ghost">Adaptive</span>
+                    </header>
+                    <p class="insight-copy">Personalised quests appear here. Recommendations linked to your weak spots.</p>
+                    <ul class="recommendations" id="recommendationsList" aria-live="polite"></ul>
+                    <div class="accessibility-toggles">
+                        <label>
+                            <input type="checkbox" id="toggleTts">
+                            <span>Enable text-to-speech</span>
+                        </label>
+                        <label>
+                            <input type="checkbox" id="toggleVoiceInput">
+                            <span>Enable voice input commands</span>
+                        </label>
+                    </div>
+                </article>
+            </div>
+        </section>
+
+        <section id="subjects">
+            <div class="section-heading">
+                <h2 data-i18n="home_subjects_title">Choose your realm</h2>
+                <p data-i18n="home_subjects_subtitle">Pick a mission track and level up your skills with handcrafted quizzes, seasonal boosts, and mentor feedback.</p>
+            </div>
+            <div class="cards-grid">
+                <article class="card" data-subject="math">
+                    <div class="card-emoji">🧮</div>
+                    <small data-i18n="home_card_tier_core">Core track</small>
+                    <h3 data-i18n="subject_math">Math</h3>
+                    <p data-i18n="home_card_math">Practice mental math, fractions, and geometry puzzles.</p>
+                    <div class="progress-row">
+                        <span data-i18n="label_quizzes">Quizzes</span>: <strong id="statMathQuizzes">0</strong>
+                        <span class="spacer"></span>
+                        <span data-i18n="label_best">Best</span>: <strong id="statMathBest">0%</strong>
+                    </div>
+                    <a class="btn btn-secondary" href="quiz.html?subject=math" data-i18n="btn_take_quiz">Take Quiz</a>
+                </article>
+                <article class="card" data-subject="science">
+                    <div class="card-emoji">🔬</div>
+                    <small data-i18n="home_card_tier_lab">Lab quests</small>
+                    <h3 data-i18n="subject_science">Science</h3>
+                    <p data-i18n="home_card_science">Explore ecosystems, energy, and everyday experiments.</p>
+                    <div class="progress-row">
+                        <span data-i18n="label_quizzes">Quizzes</span>: <strong id="statScienceQuizzes">0</strong>
+                        <span class="spacer"></span>
+                        <span data-i18n="label_best">Best</span>: <strong id="statScienceBest">0%</strong>
+                    </div>
+                    <a class="btn btn-secondary" href="quiz.html?subject=science" data-i18n="btn_take_quiz">Take Quiz</a>
+                </article>
+                <article class="card" data-subject="english">
+                    <div class="card-emoji">📚</div>
+                    <small data-i18n="home_card_tier_story">Story mode</small>
+                    <h3 data-i18n="subject_english">English</h3>
+                    <p data-i18n="home_card_english">Boost vocabulary, grammar, and public speaking quests.</p>
+                    <div class="progress-row">
+                        <span data-i18n="label_quizzes">Quizzes</span>: <strong id="statEnglishQuizzes">0</strong>
+                        <span class="spacer"></span>
+                        <span data-i18n="label_best">Best</span>: <strong id="statEnglishBest">0%</strong>
+                    </div>
+                    <a class="btn btn-secondary" href="quiz.html?subject=english" data-i18n="btn_take_quiz">Take Quiz</a>
+                </article>
+                <article class="card" data-subject="social">
+                    <div class="card-emoji">🏛️</div>
+                    <small data-i18n="home_card_tier_new">New season</small>
+                    <h3 data-i18n="subject_social">Social Science</h3>
+                    <p data-i18n="home_card_social">Understand civics, culture, and community problem solving.</p>
+                    <div class="progress-row">
+                        <span data-i18n="label_quizzes">Quizzes</span>: <strong id="statSocialQuizzes">0</strong>
+                        <span class="spacer"></span>
+                        <span data-i18n="label_best">Best</span>: <strong id="statSocialBest">0%</strong>
+                    </div>
+                    <a class="btn btn-secondary" href="quiz.html?subject=social" data-i18n="btn_take_quiz">Take Quiz</a>
+                </article>
+                <article class="card" data-subject="computers">
+                    <div class="card-emoji">💻</div>
+                    <small data-i18n="home_card_tier_future">Future skills</small>
+                    <h3 data-i18n="subject_computers">Computers</h3>
+                    <p data-i18n="home_card_computers">Stay safe online, learn coding basics, and digital hygiene.</p>
+                    <div class="progress-row">
+                        <span data-i18n="label_quizzes">Quizzes</span>: <strong id="statComputersQuizzes">0</strong>
+                        <span class="spacer"></span>
+                        <span data-i18n="label_best">Best</span>: <strong id="statComputersBest">0%</strong>
+                    </div>
+                    <a class="btn btn-secondary" href="quiz.html?subject=computers" data-i18n="btn_take_quiz">Take Quiz</a>
+                </article>
+                <article class="card" data-subject="history">
+                    <div class="card-emoji">🏺</div>
+                    <small data-i18n="home_card_tier_legends">Legends</small>
+                    <h3 data-i18n="subject_history">History</h3>
+                    <p data-i18n="home_card_history">Relive journeys of leaders, reforms, and ancient cities.</p>
+                    <div class="progress-row">
+                        <span data-i18n="label_quizzes">Quizzes</span>: <strong id="statHistoryQuizzes">0</strong>
+                        <span class="spacer"></span>
+                        <span data-i18n="label_best">Best</span>: <strong id="statHistoryBest">0%</strong>
+                    </div>
+                    <a class="btn btn-secondary" href="quiz.html?subject=history" data-i18n="btn_take_quiz">Take Quiz</a>
+                </article>
+                <article class="card" data-subject="geography">
+                    <div class="card-emoji">🌍</div>
+                    <small data-i18n="home_card_tier_world">World tour</small>
+                    <h3 data-i18n="subject_geography">Geography</h3>
+                    <p data-i18n="home_card_geography">Discover maps, climates, and sustainable living tips.</p>
+                    <div class="progress-row">
+                        <span data-i18n="label_quizzes">Quizzes</span>: <strong id="statGeographyQuizzes">0</strong>
+                        <span class="spacer"></span>
+                        <span data-i18n="label_best">Best</span>: <strong id="statGeographyBest">0%</strong>
+                    </div>
+                    <a class="btn btn-secondary" href="quiz.html?subject=geography" data-i18n="btn_take_quiz">Take Quiz</a>
+                </article>
+            </div>
+        </section>
+
+        <section id="ai-tutor" class="ai-tutor">
+            <div class="section-heading">
+                <h2>AI Tutor & Smart Learning Hub</h2>
+                <p>An offline-first study buddy that speaks English, हिन्दी, and ಕನ್ನಡ. It reads lessons aloud, listens to simple voice commands, and nudges you with goal-based quests.</p>
+            </div>
+            <div class="tutor-layout">
+                <div class="tutor-chat" aria-label="AI tutor chat window">
+                    <header>
+                        <h3>Chat with Namma Tutor</h3>
+                        <div class="status-pill" id="tutorStatus">Online • Sync ready</div>
+                    </header>
+                    <div class="chat-window" id="chatWindow" aria-live="polite"></div>
+                    <form id="chatForm" class="chat-input" autocomplete="off">
+                        <label class="visually-hidden" for="chatMessage">Type your question</label>
+                        <textarea id="chatMessage" rows="2" placeholder="Ask: ‘Explain Fractions in Kannada’" required></textarea>
+                        <div class="chat-actions">
+                            <button type="button" class="btn btn-ghost" id="voiceRecordBtn" aria-pressed="false">🎙️ Voice</button>
+                            <button type="submit" class="btn btn-primary">Send</button>
+                        </div>
+                    </form>
+                    <p class="chat-hint">Tip: say “Start Math lesson” or “Next question” when voice input is enabled.</p>
+                </div>
+                <aside class="tutor-side">
+                    <div class="card list-card">
+                        <h3>What the tutor can do</h3>
+                        <ul>
+                            <li>Personalised study route per subject and level</li>
+                            <li>Highlights weak areas and suggests quick quizzes</li>
+                            <li>Voice-friendly feedback for early readers</li>
+                            <li>Daily learning streak reminders</li>
+                            <li>Offline notes that auto-sync later</li>
+                        </ul>
+                    </div>
+                    <div class="card list-card">
+                        <h3>Local dialect packs</h3>
+                        <p>Community teachers can upload short voice notes to teach regional words. Download packs for offline use.</p>
+                        <button class="btn btn-secondary" type="button" id="downloadDialectBtn">Download packs</button>
+                        <span class="chip chip-ghost" id="offlineStatus">Offline mode inactive</span>
+                    </div>
+                    <div class="card list-card">
+                        <h3>Teacher AI Assistant</h3>
+                        <p>Teachers get a quick digest of which learners need help, with suggested interventions.</p>
+                        <ul id="teacherAlerts" class="alert-list"></ul>
+                    </div>
+                </aside>
+            </div>
+        </section>
+
+        <section id="calendar-journal" class="calendar-journal">
+            <div class="section-heading">
+                <h2>Calendar, Journal & Daily Rituals</h2>
+                <p>Plan lessons, track attendance, and jot reflections. Works offline and syncs when your device reconnects.</p>
+            </div>
+            <div class="calendar-journal-grid">
+                <article class="calendar-panel">
+                    <header>
+                        <h3>Learning Calendar</h3>
+                        <button class="btn btn-ghost" type="button" id="addEventBtn">Add plan</button>
+                    </header>
+                    <div class="calendar" id="calendarGrid" aria-live="polite"></div>
+                    <div class="calendar-legend">
+                        <span class="legend-item">
+                            <span class="dot practice"></span>
+                            Practice
+                        </span>
+                        <span class="legend-item">
+                            <span class="dot assessment"></span>
+                            Assessment
+                        </span>
+                        <span class="legend-item">
+                            <span class="dot community"></span>
+                            Community
+                        </span>
+                    </div>
+                    <ul class="event-list" id="eventList"></ul>
+                </article>
+                <article class="journal-panel">
+                    <header>
+                        <h3>Learner Journal</h3>
+                        <span id="journalCount" class="chip chip-ghost">0 entries</span>
+                    </header>
+                    <form id="journalForm" class="journal-form">
+                        <label for="journalSubject">Subject</label>
+                        <select id="journalSubject">
+                            <option value="">General</option>
+                            <option value="math">Math</option>
+                            <option value="science">Science</option>
+                            <option value="english">English</option>
+                            <option value="social">Social Science</option>
+                        </select>
+                        <label for="journalMood">Mood</label>
+                        <select id="journalMood">
+                            <option value="happy">😊 Happy</option>
+                            <option value="proud">🏆 Proud</option>
+                            <option value="confused">🤔 Confused</option>
+                            <option value="tired">😴 Tired</option>
+                            <option value="neutral" selected>🙂 Neutral</option>
+                        </select>
+                        <label for="journalText">What did you learn today?</label>
+                        <textarea id="journalText" rows="4" required placeholder="Example: Learned about fractions using chapati slices!"></textarea>
+                        <button class="btn btn-primary" type="submit">Save reflection</button>
+                    </form>
+                    <ol class="journal-list" id="journalList" aria-live="polite"></ol>
+                </article>
+            </div>
+        </section>
+
+        <section id="modes">
+            <div class="section-heading">
+                <h2 data-i18n="home_modes_title">Game modes & live ops</h2>
+                <p data-i18n="home_modes_subtitle">Master daily missions, collaborate with friends, and score legendary loot in limited time events.</p>
+            </div>
+            <div class="modes">
+                <article class="mode-card">
+                    <div class="card-emoji">🗓️</div>
+                    <h3 data-i18n="home_modes_daily_title">Daily Quest Board</h3>
+                    <p data-i18n="home_modes_daily_desc">Complete 3 targeted challenges every day and keep your streak alive for bonus XP and avatar skins.</p>
+                    <ul class="feature-list">
+                        <li data-i18n="home_modes_daily_line1">Adaptive difficulty powered by your recent scores</li>
+                        <li data-i18n="home_modes_daily_line2">Syncs offline progress when you reconnect</li>
+                    </ul>
+                </article>
+                <article class="mode-card">
+                    <div class="card-emoji">🛡️</div>
+                    <h3 data-i18n="home_modes_rivals_title">Clan vs Clan Rivals</h3>
+                    <p data-i18n="home_modes_rivals_desc">Form squads with classmates, compete in weekend boss raids, and climb seasonal leaderboards.</p>
+                    <ul class="feature-list">
+                        <li data-i18n="home_modes_rivals_line1">Leaderboard resets with every season</li>
+                        <li data-i18n="home_modes_rivals_line2">Earn resources to unlock community upgrades</li>
+                    </ul>
+                </article>
+                <article class="mode-card">
+                    <div class="card-emoji">🎯</div>
+                    <h3 data-i18n="home_modes_mastery_title">Mastery Contracts</h3>
+                    <p data-i18n="home_modes_mastery_desc">Choose a mentor-backed learning arc with checkpoints, revision lectures, and reflective journals.</p>
+                    <ul class="feature-list">
+                        <li data-i18n="home_modes_mastery_line1">Mentor notes and parent-friendly summaries</li>
+                        <li data-i18n="home_modes_mastery_line2">Auto-generated portfolio for scholarships</li>
+                    </ul>
+                </article>
+            </div>
+        </section>
+
+        <section id="offline" class="offline-mode">
+            <div class="section-heading">
+                <h2>Offline & Low-Data Ready</h2>
+                <p>Zero-buffer learning for patchy networks. Download lessons once, sync progress later.</p>
+            </div>
+            <div class="offline-grid">
+                <article class="offline-card">
+                    <h3>Progressive Web App</h3>
+                    <p>Install on Android, Windows, or shared school devices. Service workers cache lessons, quizzes, and story packs.</p>
+                    <button class="btn btn-secondary" id="installPwaBtn" type="button">Install Learning App</button>
+                </article>
+                <article class="offline-card">
+                    <h3>Offline Mode Indicator</h3>
+                    <p>Visual cue shows when you’re offline. Data auto-syncs when back online.</p>
+                    <div class="offline-indicator" id="offlineIndicator">You are online ⚡</div>
+                </article>
+                <article class="offline-card">
+                    <h3>Download Packs</h3>
+                    <p>Select topics to pre-download. Ideal for community centers with intermittent connectivity.</p>
+                    <ul id="downloadQueue" class="download-list"></ul>
+                </article>
+            </div>
+        </section>
+
+        <section id="quests" class="quests-section">
+            <div class="section-heading">
+                <h2>Story Quests & Mini-games</h2>
+                <p>Turn every lesson into an adventure. Unlock voice-narrated stories and co-op quests.</p>
+            </div>
+            <div class="quests-grid">
+                <article class="quest-card">
+                    <h3>Story-based Missions</h3>
+                    <p>“Save the village” arcs blend Math, Science, and Social Science with local lore.</p>
+                    <button class="btn btn-ghost" type="button">Preview Chapter</button>
+                </article>
+                <article class="quest-card">
+                    <h3>Mini-games Arcade</h3>
+                    <p>Match pairs, spell builders, and equation races with adaptive difficulty.</p>
+                    <button class="btn btn-ghost" type="button">Play demo</button>
+                </article>
+                <article class="quest-card">
+                    <h3>Voice-assisted Navigation</h3>
+                    <p>Say “Start Math lesson” or “Next question” to move through the mission hands-free.</p>
+                    <span class="chip chip-ghost">Beta</span>
+                </article>
+            </div>
+        </section>
+
+        <section id="community" class="community-section">
+            <div class="section-heading">
+                <h2>Community & Stories</h2>
+                <p>Celebrate real learners, mentor shout-outs, and parent stories across villages.</p>
+            </div>
+            <div class="community-grid">
+                <article class="community-card">
+                    <h3>Success Stories</h3>
+                    <p>Listen to weekly highlights recorded by teachers in local languages.</p>
+                    <ul id="successStories" class="story-list"></ul>
+                </article>
+                <article class="community-card">
+                    <h3>Wall of Fame</h3>
+                    <p>Top learners and collaborators appear here with badges and weekly SMS shout-outs.</p>
+                    <ol id="wallOfFame" class="fame-list"></ol>
+                </article>
+                <article class="community-card">
+                    <h3>Village Forum</h3>
+                    <p>Moderated Q&amp;A that also pushes updates via WhatsApp or Telegram for families.</p>
+                    <button class="btn btn-secondary" type="button">Join WhatsApp Group</button>
+                </article>
+            </div>
+        </section>
+
+        <section id="partners" class="partners-section">
+            <div class="section-heading">
+                <h2>CSR & NGO Partners</h2>
+                <p>Support rural learning hubs. Sponsor devices, scholarships, or community mentors.</p>
+            </div>
+            <div class="partners-grid">
+                <article class="partner-card">
+                    <h3>Why partner with us?</h3>
+                    <ul>
+                        <li>Transparent impact dashboards</li>
+                        <li>Offline-ready content for remote schools</li>
+                        <li>Local language mentor training</li>
+                    </ul>
+                </article>
+                <article class="partner-card">
+                    <h3>Invite your organisation</h3>
+                    <form id="partnerForm" class="partner-form">
+                        <label for="partnerName">Organisation name</label>
+                        <input id="partnerName" type="text" required>
+                        <label for="partnerEmail">Contact email</label>
+                        <input id="partnerEmail" type="email" required>
+                        <label for="partnerMessage">How can we collaborate?</label>
+                        <textarea id="partnerMessage" rows="3"></textarea>
+                        <button class="btn btn-primary" type="submit">Submit interest</button>
+                    </form>
+                </article>
+                <article class="partner-card">
+                    <h3>Sponsor a cohort</h3>
+                    <p>Receive monthly impact summaries and stories from supported learners.</p>
+                    <button class="btn btn-ghost" type="button">Download brochure</button>
+                </article>
+            </div>
+        </section>
+
+        <section id="roadmap">
+            <div class="glow-split">
+                <div class="glow-panel">
+                    <div class="section-heading">
+                        <h2 data-i18n="home_roadmap_title">Learning roadmap</h2>
+                        <p data-i18n="home_roadmap_subtitle">From onboarding to mastery, every learner steps through guided arcs designed for low connectivity environments.</p>
+                    </div>
+                    <div class="timeline">
+                        <div class="timeline-step">
+                            <strong data-i18n="home_roadmap_onboarding_title">Spark onboarding</strong>
+                            <p data-i18n="home_roadmap_onboarding_copy">Create avatar, choose your mentor path, and complete diagnostic warm-up.</p>
+                        </div>
+                        <div class="timeline-step">
+                            <strong data-i18n="home_roadmap_core_title">Core missions</strong>
+                            <p data-i18n="home_roadmap_core_copy">Unlock themed quests, short audio explainers, and AR-lite interactives.</p>
+                        </div>
+                        <div class="timeline-step">
+                            <strong data-i18n="home_roadmap_boss_title">Boss fight week</strong>
+                            <p data-i18n="home_roadmap_boss_copy">Team up to solve interdisciplinary challenges with real-world scenarios.</p>
+                        </div>
+                        <div class="timeline-step">
+                            <strong data-i18n="home_roadmap_showcase_title">Showcase & review</strong>
+                            <p data-i18n="home_roadmap_showcase_copy">Upload evidence, collect mentor feedback, and generate report cards automatically.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="glow-panel">
+                    <div class="section-heading">
+                        <h2 data-i18n="home_support_title">Community & support</h2>
+                        <p data-i18n="home_support_subtitle">Designed with SPOCs, teachers, and parents for continuity in rural ecosystems.</p>
+                    </div>
+                    <div class="grid-auto">
+                        <div class="testimonial">
+                            <strong data-i18n="home_testimonial_spoc_name">SPOC Lead • Satya</strong>
+                            <p data-i18n="home_testimonial_spoc_copy">“We track learning budgets, award scholarships, and keep every learner visible with a single dashboard.”</p>
+                        </div>
+                        <div class="testimonial">
+                            <strong data-i18n="home_testimonial_teacher_name">Mentor Teacher • Aarti</strong>
+                            <p data-i18n="home_testimonial_teacher_copy">“The Social Science arc helps learners connect civics lessons with local governance challenges.”</p>
+                        </div>
+                        <div class="testimonial">
+                            <strong data-i18n="home_testimonial_parent_name">Parent Champion • Imran</strong>
+                            <p data-i18n="home_testimonial_parent_copy">“Offline sync means my child practices anywhere and I still get weekly progress alerts.”</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="about" class="about-section">
+            <div class="section-heading">
+                <h2>About the Mission</h2>
+                <p>We are a grassroots team of educators, designers, and engineers building playful learning for rural India.</p>
+            </div>
+            <div class="about-grid">
+                <article class="about-card">
+                    <h3>Our promise</h3>
+                    <p>Blend high-quality content with low-data tech so every learner can join the digital classroom.</p>
+                    <ul>
+                        <li>Multilingual lessons (English, हिन्दी, ಕನ್ನಡ)</li>
+                        <li>Community mentors &amp; teacher co-creation</li>
+                        <li>Inclusive design with large buttons &amp; voice support</li>
+                    </ul>
+                </article>
+                <article class="about-card">
+                    <h3>The team</h3>
+                    <div class="team">
+                        <figure>
+                            <img src="assets/img/team1.png" alt="Portrait of Asha, product lead" onerror="this.style.display='none'">
+                            <figcaption>Asha • Product Lead</figcaption>
+                        </figure>
+                        <figure>
+                            <img src="assets/img/team2.png" alt="Portrait of Ravi, learning designer" onerror="this.style.display='none'">
+                            <figcaption>Ravi • Learning Designer</figcaption>
+                        </figure>
+                        <figure>
+                            <img src="assets/img/team3.png" alt="Portrait of Zoya, engineering partner" onerror="this.style.display='none'">
+                            <figcaption>Zoya • Engineering Partner</figcaption>
+                        </figure>
+                    </div>
+                </article>
+                <article class="about-card">
+                    <h3>Stay in touch</h3>
+                    <form id="contactForm" class="contact-form">
+                        <label for="contactName">Name</label>
+                        <input id="contactName" type="text" required>
+                        <label for="contactEmail">Email / Phone</label>
+                        <input id="contactEmail" type="text" required>
+                        <label for="contactMessage">Message</label>
+                        <textarea id="contactMessage" rows="3" required></textarea>
+                        <div class="contact-actions">
+                            <label class="sms-optin">
+                                <input type="checkbox" id="smsOptIn">
+                                Send my ward’s progress via SMS
+                            </label>
+                            <button class="btn btn-primary" type="submit">Submit</button>
+                        </div>
+                    </form>
+                </article>
+            </div>
+        </section>
+
+        <section id="auth" class="auth-section">
+            <div class="section-heading">
+                <h2>Access &amp; Roles</h2>
+                <p>Students can hop in as guests, teachers manage cohorts, and admins control content pipelines.</p>
+            </div>
+            <div class="auth-grid">
+                <article class="auth-card">
+                    <h3>Student login</h3>
+                    <p>Sign in with phone or go guest mode. Offline progress syncs when you reconnect.</p>
+                    <button class="btn btn-secondary" type="button">Student Login</button>
+                </article>
+                <article class="auth-card">
+                    <h3>Teacher console</h3>
+                    <p>Bulk enrol students, assign quests, and receive AI assistant nudges.</p>
+                    <button class="btn btn-secondary" type="button">Teacher Login</button>
+                </article>
+                <article class="auth-card">
+                    <h3>Admin dashboard</h3>
+                    <p>Manage content seasons, language packs, and monitor device health.</p>
+                    <button class="btn btn-secondary" type="button">Admin Access</button>
+                </article>
+            </div>
+        </section>
+
+        <section class="cta" id="call-to-action">
+            <h2 data-i18n="home_cta_banner_title">Ready to deploy the next mission?</h2>
+            <p data-i18n="home_cta_banner_subtitle">Launch the dashboard, invite your cohort, and let us auto-sync progress to the cloud when connectivity returns.</p>
+            <div class="cta-actions">
+                <a class="btn btn-accent" href="dashboard.html" data-i18n="home_cta_join">Launch Dashboard</a>
+                <a class="btn btn-ghost" href="leaderboard.html" data-i18n="home_cta_explore">View Leaderboards</a>
+            </div>
         </section>
     </main>
 
     <footer class="site-footer">
-        <div>© <span id="year"></span> <span data-i18n="app_title">Gamified Learning</span></div>
+        <div>
+            © <span id="year"></span> <span data-i18n="app_title">Gamified Learning</span>
+        </div>
+        <nav>
+            <a href="#hero" data-i18n="home_footer_nav_top">Back to top</a>
+            <a href="profile.html" data-i18n="home_footer_nav_profile">Profile</a>
+            <a href="spoc.html" data-i18n="nav_spoc">SPOC</a>
+        </nav>
         <div class="points" title="Total Points"><span data-i18n="label_points">Points</span>: <strong id="totalPoints">0</strong></div>
     </footer>
 
     <script src="assets/js/storage.js"></script>
     <script src="assets/js/i18n.js"></script>
     <script src="assets/js/app.js"></script>
+    <script src="assets/js/backend-sync.js"></script>
+    <script src="assets/js/home.js"></script>
 </body>
 <noscript>Please enable JavaScript for the best experience.</noscript>
-</html>
-
-<!doctype html>
-<html lang="en">
-<head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Rural Learning - Gamified</title>
-<link rel="stylesheet" href="/styles.css" />
-</head>
-<body>
-<header>
-<h1>Rural Learning</h1>
-<nav>
-<a href="#/">Home</a>
-<a href="#/lessons">Lessons</a>
-<a href="#/leaderboard">Leaderboard</a>
-<span id="auth-links"></span>
-</nav>
-</header>
-<main id="app"></main>
-<footer>
-<small>Made for learners everywhere</small>
-</footer>
-<script src="/app.js"></script>
-</body>
 </html>

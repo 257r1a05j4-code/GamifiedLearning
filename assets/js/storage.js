@@ -21,35 +21,68 @@ const StorageAPI = (() => {
         localStorage.setItem(key, JSON.stringify(value));
     }
 
+    const SUBJECT_KEYS = ['math','science','english','social','computers','history','geography'];
+
+    function normalizeSubjectProgress(subject){
+        return {
+            quizzesTaken: subject?.quizzesTaken || 0,
+            bestScore: subject?.bestScore || 0,
+            timeMinutes: subject?.timeMinutes || 0,
+            sessions: Array.isArray(subject?.sessions) ? subject.sessions : []
+        };
+    }
+
+    function normalizeProfile(profile, name){
+        const normalized = {
+            name: profile?.name || name || 'Player',
+            role: profile?.role || 'student',
+            email: profile?.email || '',
+            phone: profile?.phone || '',
+            emailVerified: !!profile?.emailVerified,
+            currentGrade: profile?.currentGrade || '',
+            school: profile?.school || '',
+            dob: profile?.dob || '',
+            gender: profile?.gender || '',
+            location: profile?.location || '',
+            spocId: profile?.spocId || '',
+            points: profile?.points || 0,
+            badges: Array.isArray(profile?.badges) ? profile.badges : [],
+            streak: profile?.streak ? {
+                current: profile.streak.current || 0,
+                best: profile.streak.best || 0,
+                lastDate: profile.streak.lastDate || ''
+            } : { current: 0, best: 0, lastDate: '' },
+            preferences: {
+                ttsEnabled: typeof profile?.preferences?.ttsEnabled === 'boolean' ? profile.preferences.ttsEnabled : false,
+                voiceInputEnabled: typeof profile?.preferences?.voiceInputEnabled === 'boolean' ? profile.preferences.voiceInputEnabled : false,
+                preferredLanguage: profile?.preferences?.preferredLanguage || 'en'
+            },
+            progress: { subjects: {} },
+            journal: Array.isArray(profile?.journal) ? profile.journal : [],
+            calendarEvents: Array.isArray(profile?.calendarEvents) ? profile.calendarEvents : []
+        };
+
+        const subjects = profile?.progress?.subjects || {};
+        SUBJECT_KEYS.forEach(key => {
+            normalized.progress.subjects[key] = normalizeSubjectProgress(subjects[key]);
+        });
+        return normalized;
+    }
+
     function ensureUserProfile(name){
         if (!name) return null;
         const users = _read(LS_KEYS.USERS, {});
         if (!users[name]){
-            users[name] = {
-                name,
-                role: 'student', // 'student' | 'admin' | 'spoc'
-                email: '',
-                phone: '',
-                emailVerified: false,
-                currentGrade: '',
-                school: '',
-                dob: '',
-                gender: '',
-                location: '',
-                spocId: '',
-                points: 0,
-                badges: [],
-                progress: {
-                    subjects: {
-                        math: { quizzesTaken: 0, bestScore: 0 },
-                        science: { quizzesTaken: 0, bestScore: 0 },
-                        english: { quizzesTaken: 0, bestScore: 0 },
-                    }
-                }
-            };
+            users[name] = normalizeProfile({ name }, name);
+            _write(LS_KEYS.USERS, users);
+            return users[name];
+        }
+        const normalized = normalizeProfile(users[name], name);
+        if (JSON.stringify(normalized) !== JSON.stringify(users[name])){
+            users[name] = normalized;
             _write(LS_KEYS.USERS, users);
         }
-        return users[name];
+        return normalized;
     }
 
     function getCurrentUser(){
@@ -66,12 +99,22 @@ const StorageAPI = (() => {
 
     function getUserProfile(name){
         const users = _read(LS_KEYS.USERS, {});
-        return users[name] || ensureUserProfile(name);
+        const profile = users[name];
+        if (!profile) return ensureUserProfile(name);
+        const normalized = normalizeProfile(profile, name);
+        if (JSON.stringify(normalized) !== JSON.stringify(profile)){
+            users[name] = normalized;
+            _write(LS_KEYS.USERS, users);
+        }
+        return normalized;
     }
     function saveUserProfile(profile){
+        if (!profile?.name) return null;
         const users = _read(LS_KEYS.USERS, {});
-        users[profile.name] = profile;
+        const normalized = normalizeProfile(profile, profile.name);
+        users[normalized.name] = normalized;
         _write(LS_KEYS.USERS, users);
+        return normalized;
     }
 
     function addPoints(name, points){
@@ -96,13 +139,212 @@ const StorageAPI = (() => {
         return getUserProfile(name).progress;
     }
     function updateSubjectProgress(name, subjectKey, scorePct){
+        if (!SUBJECT_KEYS.includes(subjectKey)) return;
         const profile = getUserProfile(name);
-        const subj = profile.progress.subjects[subjectKey] || { quizzesTaken: 0, bestScore: 0 };
+        const subj = normalizeSubjectProgress(profile.progress.subjects[subjectKey]);
         subj.quizzesTaken += 1;
-        subj.bestScore = Math.max(subj.bestScore || 0, Math.round(scorePct));
+        if (scorePct !== undefined && scorePct !== null){
+            subj.bestScore = Math.max(subj.bestScore || 0, Math.round(scorePct));
+        }
         profile.progress.subjects[subjectKey] = subj;
+        const updated = saveUserProfile(profile);
+        upsertLeaderboard(updated);
+    }
+
+    function _dateKey(dateLike){
+        const date = dateLike ? new Date(dateLike) : new Date();
+        return !isNaN(date.getTime()) ? date.toISOString().slice(0, 10) : new Date().toISOString().slice(0, 10);
+    }
+
+    function _applyLearningStreak(profile, dateLike){
+        const streak = profile.streak || { current: 0, best: 0, lastDate: '' };
+        const todayKey = _dateKey(dateLike);
+        if (streak.lastDate === todayKey) return streak;
+        if (!streak.lastDate){
+            streak.current = 1;
+        } else {
+            const last = new Date(streak.lastDate);
+            const today = new Date(todayKey);
+            const diffDays = Math.floor((today - last) / (1000 * 60 * 60 * 24));
+            if (diffDays === 0){
+                // already marked today
+            } else if (diffDays === 1){
+                streak.current = (streak.current || 0) + 1;
+            } else if (diffDays > 1){
+                streak.current = 1;
+            }
+        }
+        streak.best = Math.max(streak.best || 0, streak.current || 1);
+        streak.lastDate = todayKey;
+        profile.streak = streak;
+        return streak;
+    }
+
+    function logStudySession(name, subjectKey, durationMinutes, options = {}){
+        if (!SUBJECT_KEYS.includes(subjectKey)) return null;
+        const duration = Math.max(0, Number(durationMinutes) || 0);
+        const profile = getUserProfile(name);
+        const subj = normalizeSubjectProgress(profile.progress.subjects[subjectKey]);
+        if (duration > 0){
+            subj.timeMinutes = (subj.timeMinutes || 0) + duration;
+            subj.sessions = subj.sessions || [];
+            const session = {
+                duration: Math.round(duration * 100) / 100,
+                ts: Date.now(),
+                note: options.note || '',
+                mode: options.mode || 'self'
+            };
+            subj.sessions.push(session);
+            if (subj.sessions.length > 200){
+                subj.sessions = subj.sessions.slice(-200);
+            }
+            _applyLearningStreak(profile, options.date || session.ts);
+        }
+        if (typeof options.bestScore === 'number'){
+            subj.bestScore = Math.max(subj.bestScore || 0, Math.round(options.bestScore));
+        }
+        profile.progress.subjects[subjectKey] = subj;
+        const updated = saveUserProfile(profile);
+        upsertLeaderboard(updated);
+        return { ...subj };
+    }
+
+    function getStudyAnalytics(name){
+        const profile = getUserProfile(name);
+        const subjects = profile.progress.subjects;
+        const analytics = {};
+        SUBJECT_KEYS.forEach(key => {
+            const subj = normalizeSubjectProgress(subjects[key]);
+            const totalSessions = subj.sessions.length;
+            const averageSession = totalSessions ? subj.timeMinutes / totalSessions : 0;
+            analytics[key] = {
+                quizzesTaken: subj.quizzesTaken,
+                bestScore: subj.bestScore,
+                timeMinutes: subj.timeMinutes,
+                sessions: subj.sessions.slice(-20),
+                averageSession: Number(averageSession.toFixed(1))
+            };
+        });
+        return {
+            streak: profile.streak,
+            subjects: analytics
+        };
+    }
+
+    function updatePreferences(name, preferences = {}){
+        const profile = getUserProfile(name);
+        profile.preferences = {
+            ...profile.preferences,
+            ...preferences
+        };
+        return saveUserProfile(profile).preferences;
+    }
+
+    function addJournalEntry(name, entry){
+        const profile = getUserProfile(name);
+        const journal = Array.isArray(profile.journal) ? profile.journal : [];
+        const item = {
+            id: entry?.id || `jr-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`,
+            text: (entry?.text || '').trim(),
+            mood: entry?.mood || 'neutral',
+            subject: entry?.subject || '',
+            ts: entry?.ts || Date.now()
+        };
+        if (!item.text && !entry?.allowEmpty) return null;
+        journal.push(item);
+        if (journal.length > 200){
+            journal.splice(0, journal.length - 200);
+        }
+        profile.journal = journal;
         saveUserProfile(profile);
-        upsertLeaderboard(profile);
+        return item;
+    }
+
+    function updateJournalEntry(name, entryId, update){
+        const profile = getUserProfile(name);
+        const journal = Array.isArray(profile.journal) ? profile.journal : [];
+        const idx = journal.findIndex(e => e.id === entryId);
+        if (idx === -1) return null;
+        journal[idx] = { ...journal[idx], ...update, id: journal[idx].id };
+        profile.journal = journal;
+        saveUserProfile(profile);
+        return journal[idx];
+    }
+
+    function deleteJournalEntry(name, entryId){
+        const profile = getUserProfile(name);
+        const journal = Array.isArray(profile.journal) ? profile.journal : [];
+        const filtered = journal.filter(entry => entry.id !== entryId);
+        if (filtered.length === journal.length) return false;
+        profile.journal = filtered;
+        saveUserProfile(profile);
+        return true;
+    }
+
+    function listJournalEntries(name){
+        return getUserProfile(name).journal.slice().sort((a,b)=> b.ts - a.ts);
+    }
+
+    function _generateEventId(){
+        return `evt-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`;
+    }
+
+    function upsertCalendarEvent(name, event){
+        const profile = getUserProfile(name);
+        const events = Array.isArray(profile.calendarEvents) ? profile.calendarEvents : [];
+        const id = event.id || _generateEventId();
+        const normalized = {
+            id,
+            title: event.title || 'Learning session',
+            date: _dateKey(event.date || Date.now()),
+            subject: event.subject || '',
+            type: event.type || 'practice',
+            duration: Number(event.duration || 0),
+            completed: !!event.completed
+        };
+        const idx = events.findIndex(e => e.id === id);
+        if (idx >= 0){
+            events[idx] = { ...events[idx], ...normalized };
+        } else {
+            events.push(normalized);
+        }
+        profile.calendarEvents = events;
+        saveUserProfile(profile);
+        return normalized;
+    }
+
+    function getCalendarEvents(name){
+        const events = getUserProfile(name).calendarEvents.slice();
+        events.sort((a,b) => a.date.localeCompare(b.date));
+        return events;
+    }
+
+    function removeCalendarEvent(name, eventId){
+        const profile = getUserProfile(name);
+        const events = Array.isArray(profile.calendarEvents) ? profile.calendarEvents : [];
+        const filtered = events.filter(evt => evt.id !== eventId);
+        if (filtered.length === events.length) return false;
+        profile.calendarEvents = filtered;
+        saveUserProfile(profile);
+        return true;
+    }
+
+    function markCalendarEventComplete(name, eventId, completed = true){
+        const profile = getUserProfile(name);
+        const events = Array.isArray(profile.calendarEvents) ? profile.calendarEvents : [];
+        const idx = events.findIndex(evt => evt.id === eventId);
+        if (idx === -1) return null;
+        events[idx].completed = !!completed;
+        profile.calendarEvents = events;
+        saveUserProfile(profile);
+        return events[idx];
+    }
+
+    function resetLearningStreak(name){
+        const profile = getUserProfile(name);
+        profile.streak = { current: 0, best: profile.streak?.best || 0, lastDate: '' };
+        saveUserProfile(profile);
+        return profile.streak;
     }
 
     function upsertLeaderboard(profile){
@@ -192,20 +434,20 @@ const StorageAPI = (() => {
         const users = _read(LS_KEYS.USERS, {});
         const profiles = Object.values(users);
         let totalQuizzes = 0;
-        const subTotals = { math: {sum:0, count:0}, science:{sum:0,count:0}, english:{sum:0,count:0} };
+        const subjectAgg = {}; // key -> {sum, count}
         const badgeCounts = {};
         for (const p of profiles){
             for (const b of (p.badges||[])) badgeCounts[b] = (badgeCounts[b]||0)+1;
             for (const [key, s] of Object.entries(p.progress.subjects || {})){
                 totalQuizzes += s.quizzesTaken || 0;
-                if (s.bestScore > 0){ subTotals[key].sum += s.bestScore; subTotals[key].count += 1; }
+                if (s.bestScore > 0){
+                    if (!subjectAgg[key]) subjectAgg[key] = { sum:0, count:0 };
+                    subjectAgg[key].sum += s.bestScore;
+                    subjectAgg[key].count += 1;
+                }
             }
         }
-        const averageScoreBySubject = {
-            math: subTotals.math.count ? (subTotals.math.sum / subTotals.math.count) : 0,
-            science: subTotals.science.count ? (subTotals.science.sum / subTotals.science.count) : 0,
-            english: subTotals.english.count ? (subTotals.english.sum / subTotals.english.count) : 0,
-        };
+        const averageScoreBySubject = Object.fromEntries(Object.entries(subjectAgg).map(([k,v])=>[k, v.count ? (v.sum / v.count) : 0]));
         const averageScoreAll = (()=>{
             const vals = Object.values(averageScoreBySubject);
             return vals.length ? (vals.reduce((a,b)=>a+b,0) / vals.length) : 0;
@@ -218,6 +460,11 @@ const StorageAPI = (() => {
         getUserProfile, saveUserProfile,
         addPoints, addBadge,
         getUserProgress, updateSubjectProgress,
+        logStudySession, getStudyAnalytics,
+        updatePreferences,
+        addJournalEntry, updateJournalEntry, deleteJournalEntry, listJournalEntries,
+        upsertCalendarEvent, getCalendarEvents, removeCalendarEvent, markCalendarEventComplete,
+        resetLearningStreak,
         getLeaderboard,
         setLanguage, getLanguage,
         // auth

@@ -10,14 +10,13 @@
 <body>
     <header class="site-header">
         <div class="brand">
-            <span class="logo">🎓</span>
+            <span class="logo">🎮</span>
             <span data-i18n="app_title">Gamified Learning</span>
         </div>
         <nav class="nav">
             <a href="index.html" data-i18n="nav_home">Home</a>
             <a href="dashboard.html" data-i18n="nav_dashboard">Dashboard</a>
             <a href="leaderboard.html" data-i18n="nav_leaderboard">Leaderboard</a>
-            <a href="teacher.html" data-i18n="nav_teacher">Teacher</a>
             <a href="lectures.html" data-i18n="nav_lectures">Lectures</a>
             <a href="profile.html" data-i18n="nav_profile">Profile</a>
             <a href="login.html" class="active" data-i18n="nav_login">Login</a>
@@ -75,6 +74,7 @@
     <script src="assets/js/storage.js"></script>
     <script src="assets/js/i18n.js"></script>
     <script src="assets/js/app.js"></script>
+    <script src="assets/js/backend-sync.js"></script>
     <script>
         const loginBtn = document.getElementById('loginBtn');
         const signupBtn = document.getElementById('signupBtn');
@@ -83,6 +83,13 @@
             const name = document.getElementById('loginName').value.trim();
             if (!name) return alert('Enter name');
             StorageAPI.login(name);
+            const profile = StorageAPI.getUserProfile(name);
+            BackendSync.syncProfile({
+                name: profile.name,
+                points: profile.points,
+                badges: profile.badges,
+                progress: profile.progress
+            });
             alert('Logged in');
         };
         signupBtn.onclick = ()=>{
@@ -98,15 +105,30 @@
                 role: document.getElementById('suRole').value,
             };
             const p = StorageAPI.signup(data);
+            BackendSync.syncProfile({
+                name: p.name,
+                points: p.points,
+                badges: p.badges,
+                progress: p.progress
+            });
             alert('Signed up as ' + p.role);
         };
         verifyBtn.onclick = ()=>{
             const name = StorageAPI.getCurrentUser();
             StorageAPI.setEmailVerified(name, true);
+            const profile = StorageAPI.getUserProfile(name);
+            BackendSync.syncProfile({
+                name: profile.name,
+                points: profile.points,
+                badges: profile.badges,
+                progress: profile.progress
+            });
             alert('Email marked verified for ' + name);
         };
     </script>
 </body>
 </html>
+
+
 
 

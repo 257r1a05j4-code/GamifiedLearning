@@ -10,14 +10,16 @@
 <body>
     <header class="site-header">
         <div class="brand">
-            <span class="logo">🎓</span>
+            <span class="logo">🎮</span>
             <span data-i18n="app_title">Gamified Learning</span>
         </div>
         <nav class="nav">
             <a href="index.html" data-i18n="nav_home">Home</a>
             <a href="dashboard.html" class="active" data-i18n="nav_dashboard">Dashboard</a>
             <a href="leaderboard.html" data-i18n="nav_leaderboard">Leaderboard</a>
-            <a href="teacher.html" data-i18n="nav_teacher">Teacher</a>
+            <a href="lectures.html" data-i18n="nav_lectures">Lectures</a>
+            <a href="profile.html" data-i18n="nav_profile">Profile</a>
+            <a href="login.html" data-i18n="nav_login">Login</a>
         </nav>
         <div class="controls">
             <select id="langSelect" aria-label="Language selector">
@@ -33,9 +35,62 @@
     </header>
 
     <main class="container">
-        <h1 data-i18n="dashboard_title">Your Subjects</h1>
-        <section id="subjects" class="cards-grid">
-            <!-- Filled by JS from progress -->
+        <section class="hero">
+            <div class="chip" data-i18n="home_chip_season">Season 4 • Cyber Quest</div>
+            <h1 data-i18n="dashboard_title">Your Subjects</h1>
+            <p data-i18n="dashboard_subtitle">Build your streak, collect badges, and level up every realm with co-op quests.</p>
+            <div class="hero-actions">
+                <a class="btn btn-accent" href="quiz.html" data-i18n="home_cta_preview">Preview Quests</a>
+                <a class="btn btn-secondary" href="leaderboard.html" data-i18n="home_cta_explore">View Leaderboards</a>
+            </div>
+            <div class="ticker">
+                <span class="chip chip-ghost">👤 <span id="playerName"></span></span>
+            </div>
+        </section>
+
+        <section class="stat-grid" aria-label="Player stats">
+            <article class="stat-card">
+                <span class="stat-eyebrow" data-i18n="dashboard_stat_points_label">Total points</span>
+                <span class="stat-value" id="playerPoints">0</span>
+                <span class="stat-meta" data-i18n="dashboard_stat_points_meta">Earned from quizzes and missions</span>
+            </article>
+            <article class="stat-card">
+                <span class="stat-eyebrow" data-i18n="dashboard_stat_badges_label">Badges collected</span>
+                <span class="stat-value" id="playerBadges">0</span>
+                <span class="stat-meta" data-i18n="dashboard_stat_badges_meta">Show off your mastery flair</span>
+            </article>
+            <article class="stat-card">
+                <span class="stat-eyebrow" data-i18n="dashboard_stat_quizzes_label">Quizzes completed</span>
+                <span class="stat-value" id="playerQuizzes">0</span>
+                <span class="stat-meta" data-i18n="dashboard_stat_quizzes_meta">Keep your streak alive</span>
+            </article>
+        </section>
+
+        <section>
+            <div class="section-heading">
+                <h2 data-i18n="dashboard_subjects_heading">Active learning tracks</h2>
+                <p data-i18n="dashboard_subjects_subheading">Jump into a subject to improve mastery and unlock season boosts.</p>
+            </div>
+            <section id="subjects" class="cards-grid"></section>
+        </section>
+
+        <section class="glow-panel">
+            <div class="section-heading">
+                <h2 data-i18n="dashboard_daily_title">Daily mission board</h2>
+                <p data-i18n="dashboard_daily_subtitle">Complete the objectives to gain XP and bonus loot.</p>
+            </div>
+            <ul id="missionList" class="feature-list"></ul>
+        </section>
+
+        <section class="glow-panel">
+            <div class="section-heading">
+                <h2 data-i18n="dashboard_league_title">League briefing</h2>
+                <p data-i18n="dashboard_league_subtitle">Top squads in the global arena</p>
+            </div>
+            <div id="leaguePreview" class="leaderboard"></div>
+            <div class="hero-actions" style="margin-top:16px;">
+                <a class="btn btn-secondary" href="leaderboard.html" data-i18n="dashboard_league_cta">Open leaderboard</a>
+            </div>
         </section>
     </main>
 
@@ -47,35 +102,11 @@
     <script src="assets/js/storage.js"></script>
     <script src="assets/js/i18n.js"></script>
     <script src="assets/js/app.js"></script>
-    <script>
-        (function renderSubjects(){
-            const container = document.getElementById('subjects');
-            const subjects = [
-                { key: 'math', emoji: '🧮', titleKey: 'subject_math', descKey: 'home_card_math' },
-                { key: 'science', emoji: '🔬', titleKey: 'subject_science', descKey: 'home_card_science' },
-                { key: 'english', emoji: '📚', titleKey: 'subject_english', descKey: 'home_card_english' },
-            ];
-            const progress = StorageAPI.getUserProgress(StorageAPI.getCurrentUser());
-            container.innerHTML = subjects.map(s => {
-                const subj = progress.subjects[s.key] || { quizzesTaken: 0, bestScore: 0 };
-                return `
-                    <article class="card">
-                        <div class="card-emoji">${s.emoji}</div>
-                        <h3 data-i18n="${s.titleKey}">${I18n.t(s.titleKey)}</h3>
-                        <p data-i18n="${s.descKey}">${I18n.t(s.descKey)}</p>
-                        <div class="progress-row">
-                            <span data-i18n="label_quizzes">Quizzes</span>: <strong>${subj.quizzesTaken}</strong>
-                            <span class="spacer"></span>
-                            <span data-i18n="label_best">Best</span>: <strong>${subj.bestScore}%</strong>
-                        </div>
-                        <a class="btn btn-secondary" href="quiz.html?subject=${s.key}" data-i18n="btn_take_quiz">${I18n.t('btn_take_quiz')}</a>
-                    </article>
-                `;
-            }).join('');
-            I18n.apply();
-        })();
-    </script>
+    <script src="assets/js/backend-sync.js"></script>
+    <script src="assets/js/dashboard.js"></script>
 </body>
 </html>
+
+
 
 

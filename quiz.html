@@ -10,14 +10,16 @@
 <body>
     <header class="site-header">
         <div class="brand">
-            <span class="logo">🎓</span>
+            <span class="logo">🎮</span>
             <span data-i18n="app_title">Gamified Learning</span>
         </div>
         <nav class="nav">
             <a href="index.html" data-i18n="nav_home">Home</a>
             <a href="dashboard.html" data-i18n="nav_dashboard">Dashboard</a>
             <a href="leaderboard.html" data-i18n="nav_leaderboard">Leaderboard</a>
-            <a href="teacher.html" data-i18n="nav_teacher">Teacher</a>
+            <a href="lectures.html" data-i18n="nav_lectures">Lectures</a>
+            <a href="profile.html" data-i18n="nav_profile">Profile</a>
+            <a href="login.html" data-i18n="nav_login">Login</a>
         </nav>
         <div class="controls">
             <select id="langSelect" aria-label="Language selector">
@@ -37,6 +39,30 @@
             <h1 id="quizTitle">Quiz</h1>
             <div class="pill" id="quizSubjectPill">—</div>
         </div>
+        <section class="card" style="margin-top:10px;">
+            <div class="analytics">
+                <div class="stat">
+                    <div class="stat-label" data-i18n="label_difficulty">Difficulty</div>
+                    <div class="stat-value">
+                        <select id="difficultySelect">
+                            <option value="easy" data-i18n="diff_easy">Easy</option>
+                            <option value="medium" data-i18n="diff_medium">Medium</option>
+                            <option value="hard" data-i18n="diff_hard">Hard</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="stat">
+                    <div class="stat-label" data-i18n="label_num_questions">Questions</div>
+                    <div class="stat-value">
+                        <select id="numQuestions">
+                            <option value="5">5</option>
+                            <option value="10">10</option>
+                            <option value="15">15</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </section>
         <section id="quizContainer" class="quiz">
             <!-- Questions injected by JS -->
         </section>
@@ -49,6 +75,7 @@
             <p><span data-i18n="label_score">Score</span>: <strong id="scorePct">0%</strong></p>
             <p><span data-i18n="label_points_gained">Points Gained</span>: <strong id="pointsGained">0</strong></p>
             <div id="badgesEarned" class="badges"></div>
+            <div id="review" style="margin-top:10px;"></div>
         </section>
     </main>
 
@@ -60,8 +87,11 @@
     <script src="assets/js/storage.js"></script>
     <script src="assets/js/i18n.js"></script>
     <script src="assets/js/app.js"></script>
+    <script src="assets/js/backend-sync.js"></script>
     <script src="assets/js/quiz.js"></script>
 </body>
 </html>
+
+
 
 

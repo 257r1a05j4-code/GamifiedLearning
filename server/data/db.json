@@ -1,0 +1,18 @@
+{
+  "subjects": [
+    { "id": "math", "title": "Math", "emoji": "🧮", "category": "STEM", "difficulty": "Core", "color": "#7c3aed", "description": "Master mental math, fractions, and geometry puzzles." },
+    { "id": "science", "title": "Science", "emoji": "🔬", "category": "STEM", "difficulty": "Core", "color": "#10b981", "description": "Explore ecosystems, energy, and everyday experiments." },
+    { "id": "english", "title": "English", "emoji": "📚", "category": "Languages", "difficulty": "Story Mode", "color": "#ef4444", "description": "Build vocabulary, grammar, and confident speaking skills." },
+    { "id": "social", "title": "Social Science", "emoji": "🏛️", "category": "Civics", "difficulty": "New Season", "color": "#f97316", "description": "Understand civics, culture, and community problem solving." },
+    { "id": "computers", "title": "Computers", "emoji": "💻", "category": "Future Skills", "difficulty": "Labs", "color": "#22d3ee", "description": "Learn digital safety, coding basics, and responsible tech use." },
+    { "id": "history", "title": "History", "emoji": "🏺", "category": "Humanities", "difficulty": "Legends", "color": "#fbbf24", "description": "Relive journeys of leaders, reforms, and ancient cities." },
+    { "id": "geography", "title": "Geography", "emoji": "🌍", "category": "Humanities", "difficulty": "World Tour", "color": "#34d399", "description": "Discover maps, climates, and sustainable living tips." }
+  ],
+  "leaderboard": [
+    { "id": "seed1", "name": "Trailblazer", "points": 120, "badges": ["Starter"] },
+    { "id": "seed2", "name": "Cyber Scholar", "points": 95, "badges": ["Starter", "Star"] },
+    { "id": "seed3", "name": "Village Virtuoso", "points": 80, "badges": ["Starter"] }
+  ],
+  "users": {},
+  "stats": { "totalLearners": 42000, "totalMinutes": 3600000 }
+}

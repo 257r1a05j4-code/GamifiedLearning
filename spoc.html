@@ -10,14 +10,13 @@
 <body>
     <header class="site-header">
         <div class="brand">
-            <span class="logo">🎓</span>
+            <span class="logo">🎮</span>
             <span data-i18n="app_title">Gamified Learning</span>
         </div>
         <nav class="nav">
             <a href="index.html" data-i18n="nav_home">Home</a>
             <a href="dashboard.html" data-i18n="nav_dashboard">Dashboard</a>
             <a href="leaderboard.html" data-i18n="nav_leaderboard">Leaderboard</a>
-            <a href="teacher.html" data-i18n="nav_teacher">Teacher</a>
             <a href="lectures.html" data-i18n="nav_lectures">Lectures</a>
             <a href="profile.html" data-i18n="nav_profile">Profile</a>
             <a href="login.html" data-i18n="nav_login">Login</a>
@@ -75,6 +74,7 @@
     <script src="assets/js/storage.js"></script>
     <script src="assets/js/i18n.js"></script>
     <script src="assets/js/app.js"></script>
+    <script src="assets/js/backend-sync.js"></script>
     <script>
         const me = StorageAPI.getUserProfile(StorageAPI.getCurrentUser());
         const spocId = me.spocId;
@@ -117,5 +117,7 @@
     </script>
 </body>
 </html>
+
+
 
 
