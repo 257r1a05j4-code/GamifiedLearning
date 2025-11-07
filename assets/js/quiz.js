@@ -204,7 +204,7 @@
                 const correctIdx = item.c;
                 const ok = chosenIdx === correctIdx;
                 return `
-                    <div class="option" style="${ok?'border-color:#bbf7d0;background:#ecfccb':'border-color:#fecaca;background:#fee2e2'}">
+                    <div class="option" style="${ok?'border-color:#bbf7d0;background:#ecfccb':'border-color:#fecaca;background:#fee2e2; color:#000'}">
                         <div><strong>Q${idx+1}.</strong> ${item.q}</div>
                         <div>Chosen: ${chosenIdx>=0?item.a[chosenIdx]:'—'} | Correct: ${item.a[correctIdx]}</div>
                         ${item.e ? `<div><strong>${I18n.t('label_explanation')}:</strong> ${item.e}</div>` : ''}
