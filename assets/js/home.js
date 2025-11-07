@@ -25,6 +25,15 @@
     };
 
     function $(selector){ return document.querySelector(selector); }
+    function resolveVoiceLang(code){
+        switch(code){
+            case 'hi': return 'hi-IN';
+            case 'kn': return 'kn-IN';
+            case 'te': return 'te-IN';
+            case 'ml': return 'ml-IN';
+            default: return 'en-IN';
+        }
+    }
     function setText(id, value){
         const el = typeof id === 'string' ? document.getElementById(id) : id;
         if (el && value !== undefined && value !== null){
@@ -233,7 +242,7 @@
         function speak(text){
             if (!state.preferences?.ttsEnabled || !ttsSupported) return;
             const utterance = new SpeechSynthesisUtterance(text);
-            utterance.lang = state.preferences.preferredLanguage === 'hi' ? 'hi-IN' : state.preferences.preferredLanguage === 'kn' ? 'kn-IN' : 'en-IN';
+            utterance.lang = resolveVoiceLang(state.preferences.preferredLanguage);
             window.speechSynthesis.speak(utterance);
         }
 
@@ -325,7 +334,7 @@
             return;
         }
         state.recognition = new SpeechRecognition();
-        state.recognition.lang = state.preferences?.preferredLanguage === 'hi' ? 'hi-IN' : state.preferences?.preferredLanguage === 'kn' ? 'kn-IN' : 'en-IN';
+        state.recognition.lang = resolveVoiceLang(state.preferences?.preferredLanguage);
         state.recognition.interimResults = false;
         state.recognition.addEventListener('result', (event) => {
             const transcript = Array.from(event.results).map(r => r[0].transcript).join(' ');
@@ -577,6 +586,13 @@
         TutorBot.init();
         seedStories();
     }
+
+    document.addEventListener('language-change', (event) => {
+        state.preferences = StorageAPI.getUserProfile(StorageAPI.getCurrentUser()).preferences;
+        if (state.recognition){
+            state.recognition.lang = resolveVoiceLang(state.preferences?.preferredLanguage);
+        }
+    });
 
     BackendSync.fetchStats().then(renderStats);
     BackendSync.fetchSubjects().then(applySubjectMeta);

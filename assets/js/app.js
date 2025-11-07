@@ -10,6 +10,7 @@
         langSelect.addEventListener('change', () => {
             StorageAPI.setLanguage(langSelect.value);
             I18n.apply();
+            document.dispatchEvent(new CustomEvent('language-change', { detail: { lang: langSelect.value } }));
         });
     }
 
@@ -35,6 +36,7 @@
 
     // Initial language render
     I18n.apply();
+    document.dispatchEvent(new CustomEvent('language-change', { detail: { lang: StorageAPI.getLanguage() } }));
 })();
 
 

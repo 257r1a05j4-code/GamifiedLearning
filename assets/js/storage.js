@@ -358,7 +358,20 @@ const StorageAPI = (() => {
 
     function getLeaderboard(){ return _read(LS_KEYS.LEADERBOARD, []); }
 
-    function setLanguage(code){ _write(LS_KEYS.LANGUAGE, code); }
+    function setLanguage(code){
+        _write(LS_KEYS.LANGUAGE, code);
+        try {
+            const name = getCurrentUser();
+            const profile = getUserProfile(name);
+            profile.preferences = {
+                ...profile.preferences,
+                preferredLanguage: code
+            };
+            saveUserProfile(profile);
+        } catch (err) {
+            // ignore storage write failures silently
+        }
+    }
     function getLanguage(){ return _read(LS_KEYS.LANGUAGE, 'en'); }
 
     // Auth & Verification
