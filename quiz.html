@@ -37,6 +37,14 @@
             <h1 id="quizTitle">Quiz</h1>
             <div class="pill" id="quizSubjectPill">—</div>
         </div>
+        <div class="difficulty-selector">
+            <h2 data-i18n="select_difficulty">Select Difficulty</h2>
+            <div id="difficultyOptions">
+                <label><input type="radio" name="difficulty" value="easy" checked> <span data-i18n="difficulty_easy">Easy</span></label>
+                <label><input type="radio" name="difficulty" value="medium"> <span data-i18n="difficulty_medium">Medium</span></label>
+                <label><input type="radio" name="difficulty" value="hard"> <span data-i18n="difficulty_hard">Hard</span></label>
+            </div>
+        </div>
         <section id="quizContainer" class="quiz">
             <!-- Questions injected by JS -->
         </section>
